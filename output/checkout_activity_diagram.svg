@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" baseProfile="full" height="600px" version="1.1" width="800px">
+  <defs>
+    <style type="text/css"><![CDATA[
+            .element { fill: #ffffff; stroke: #000000; stroke-width: 1; }
+            .relationship { stroke: #000000; stroke-width: 1; }
+            .text { font-family: Arial, sans-serif; font-size: 12px; }
+            .element-name { font-weight: bold; }
+            .element-attribute { font-style: normal; }
+            .element-method { font-style: normal; }
+            .relationship-label { font-size: 10px; }
+        ]]></style>
+    <style type="text/css"><![CDATA[
+            .activity-node { fill: #FFFFFF; stroke: #000000; stroke-width: 1.5; }
+            .action-node { fill: #FFFFFF; stroke: #000000; stroke-width: 1.5; rx: 8; ry: 8; }
+            .initial-node { fill: #000000; stroke: #000000; stroke-width: 1; }
+            .final-node { fill: #FFFFFF; stroke: #000000; stroke-width: 1.5; }
+            .activity-final-inner { fill: #000000; stroke: none; }
+            .decision-node { fill: #FFFFFF; stroke: #000000; stroke-width: 1.5; }
+            .merge-node { fill: #FFFFFF; stroke: #000000; stroke-width: 1.5; }
+            .fork-node { fill: #000000; stroke: #000000; stroke-width: 1; }
+            .join-node { fill: #000000; stroke: #000000; stroke-width: 1; }
+            .object-node { fill: #FFFFFF; stroke: #000000; stroke-width: 1.5; }
+            .signal-node { fill: #FFFFFF; stroke: #000000; stroke-width: 1.5; }
+            .time-event-node { fill: #FFFFFF; stroke: #000000; stroke-width: 1.5; }
+            .swimlane { fill: #F8F8F8; stroke: #000000; stroke-width: 1; fill-opacity: 0.3; }
+            .swimlane-label { font-weight: bold; font-size: 14px; }
+            .node-label { font-size: 12px; text-anchor: middle; }
+            .edge { stroke: #000000; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+            .edge-label { font-size: 12px; text-anchor: middle; }
+            .guard { font-size: 11px; font-style: italic; }
+        ]]></style>
+    <marker id="arrow" markerHeight="10" markerWidth="10" orient="auto" refX="10" refY="5">
+      <path d="M0,0 L10,5 L0,10 L2,5 z" fill="#000000"/>
+    </marker>
+    <marker id="inheritance" markerHeight="10" markerWidth="10" orient="auto" refX="10" refY="5">
+      <path d="M0,0 L10,5 L0,10 z" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    </marker>
+    <marker id="aggregation" markerHeight="10" markerWidth="10" orient="auto" refX="10" refY="5">
+      <path d="M0,5 L5,0 L10,5 L5,10 z" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    </marker>
+    <marker id="composition" markerHeight="10" markerWidth="10" orient="auto" refX="10" refY="5">
+      <path d="M0,5 L5,0 L10,5 L5,10 z" fill="#000000"/>
+    </marker>
+    <marker id="activityArrow" markerHeight="10" markerWidth="10" orient="auto" refX="10" refY="5">
+      <path d="M0,0 L10,5 L0,10 L3,5 z" fill="#000000"/>
+    </marker>
+  </defs>
+  <g id="diagram">
+    <g id="swimlanes">
+      <g class="swimlane" id="swimlane-3324f4bc-9f30-4396-b689-2c34f74b3f5f">
+        <rect class="swimlane" fill="#FFFFFF" fill-opacity="0.3" height="130" stroke="#000000" stroke-width="1" width="200" x="-40" y="-50"/>
+        <text class="swimlane-label" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" x="60.0" y="-30">Customer</text>
+      </g>
+      <g class="swimlane" id="swimlane-56ee816b-69c5-418d-9365-dc371d459e4e">
+        <rect class="swimlane" fill="#FFFFFF" fill-opacity="0.3" height="150" stroke="#000000" stroke-width="1" width="200" x="-40" y="-50"/>
+        <text class="swimlane-label" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" x="60.0" y="-30">System</text>
+      </g>
+      <g class="swimlane" id="swimlane-3d7526ce-0ad5-4964-9415-045eea032c47">
+        <rect class="swimlane" fill="#FFFFFF" fill-opacity="0.3" height="130" stroke="#000000" stroke-width="1" width="200" x="-40" y="-50"/>
+        <text class="swimlane-label" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" x="60.0" y="-30">Payment Processor</text>
+      </g>
+    </g>
+    <g id="edges">
+      <g class="edge" id="edge-0d03e344-29b7-4304-a0a4-29cc4ee2e1d7">
+        <path class="edge" d="M19.284766908852593,13.713906763541036 L0.0,5.999999999999993" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-64fd5392-d6c1-475f-ad96-6eefe76c28a4">
+        <path class="edge" d="M0.0,30.0 L0.0,30.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-ab2460e7-5b2e-4013-8c4d-8ac6939fb4a7">
+        <path class="edge" d="M0.0,14.999999999999986 L40.0,25.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-6120a12d-cab2-43e6-b43a-be7a0718d15f">
+        <path class="edge" d="M40.0,25.0 L0.0,14.999999999999986" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+        <text class="guard" font-family="Arial, Helvetica, sans-serif" font-size="12" font-style="italic" text-anchor="middle" x="23.638034375545" y="5.447862497820015">[yes]</text>
+      </g>
+      <g class="edge" id="edge-fea76780-8b28-4e32-b635-c6032d1e5eb4">
+        <path class="edge" d="M0.0,20.0 L0.0,20.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+        <text class="guard" font-family="Arial, Helvetica, sans-serif" font-size="12" font-style="italic" text-anchor="middle" x="0.0" y="20.0">[no]</text>
+      </g>
+      <g class="edge" id="edge-6840b7a6-bc48-439f-be14-2a903a5248a4">
+        <path class="edge" d="M0.0,14.999999999999986 L40.0,25.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-a862b0a3-886e-4b97-a9b9-de43ae9742aa">
+        <path class="edge" d="M40.0,25.0 L0.0,14.999999999999986" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-13406c41-aed1-44bb-82d0-a7fd26ac8157">
+        <path class="edge" d="M0.0,30.0 L0.0,30.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-ae518346-da7b-4345-8f0c-d89182b18890">
+        <path class="edge" d="M0.0,30.0 L0.0,30.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-8aba559c-f980-46d1-9397-38990da6b137">
+        <path class="edge" d="M0.0,40.90909090909091 L5.0,0.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-ae705592-df7b-474d-ad58-0ba724dec74b">
+        <path class="edge" d="M5.0,0.0 L0.0,40.90909090909091" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-bada5e07-e75a-4efc-94c4-0bf32e2ef17d">
+        <path class="edge" d="M5.0,0.0 L0.0,40.90909090909091" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-a3d617f6-b2ee-47ad-a1e9-1f8c3f606e10">
+        <path class="edge" d="M5.0,0.0 L0.0,40.90909090909091" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-798e4a86-599c-47e6-8394-c4017281493b">
+        <path class="edge" d="M0.0,40.90909090909091 L5.0,0.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-e7644e95-1caa-4db2-b97c-1294edadc6b3">
+        <path class="edge" d="M0.0,40.90909090909091 L5.0,0.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-3360d4c6-ad48-496e-bd9d-fe3735899359">
+        <path class="edge" d="M0.0,40.90909090909091 L5.0,0.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-29b38db3-11d8-4f84-8836-20a3fcadf7a5">
+        <path class="edge" d="M5.0,0.0 L0.0,40.90909090909091" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="edge" id="edge-2468878d-572e-46c7-8547-d79e41776637">
+        <path class="edge" d="M0.0,9.999999999999993 L29.230249470757705,19.74341649025257" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+    </g>
+    <g id="nodes">
+      <g class="activity-node" id="node-d2b8e7db-7703-4791-92c6-91876ae84084">
+        <circle class="initial-node" cx="10.0" cy="10.0" fill="#000000" r="10.0"/>
+      </g>
+      <g class="activity-node" id="node-fce1ae55-a3a5-475e-8c07-659c69094ccd">
+        <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
+        <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Review Shopping Cart</text>
+      </g>
+      <g class="activity-node" id="node-72869ed9-e752-4726-8b5f-8c246f2dce43">
+        <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
+        <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Proceed to Checkout</text>
+      </g>
+      <g class="activity-node" id="node-a5f4a9af-5fd8-4e16-8619-2191d328de31">
+        <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
+        <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Enter Shipping Information</text>
+      </g>
+      <g class="activity-node" id="node-9459bfa9-341e-4011-8d85-6f1bd57e8f3d">
+        <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
+        <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Select Payment Method</text>
+      </g>
+      <g class="activity-node" id="node-c788b4be-4639-4949-90e1-bc3fa9f08587">
+        <polygon class="decision-node" fill="#FFFFFF" points="20.0,0.0 40.0,20.0 20.0,40.0 0.0,20.0" stroke="#000000" stroke-width="1"/>
+        <text class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="20.0" y="-10.0">Registered User?</text>
+      </g>
+      <g class="activity-node" id="node-5e12bd83-1923-490a-81eb-915236ef7962">
+        <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
+        <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Load Saved Info</text>
+      </g>
+      <g class="activity-node" id="node-8f8b201b-edee-40cd-a142-de3f010c7cf4">
+        <polygon class="merge-node" fill="#FFFFFF" points="20.0,0.0 40.0,20.0 20.0,40.0 0.0,20.0" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="activity-node" id="node-d2736e87-5de1-4a00-8ff2-1c61119a7898">
+        <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
+        <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Calculate Total</text>
+      </g>
+      <g class="activity-node" id="node-6409f094-febe-4281-9170-f26a0eab14ea">
+        <rect class="fork-node" fill="#000000" height="80" width="10" x="0" y="0"/>
+      </g>
+      <g class="activity-node" id="node-f9f643e9-3a4c-453a-b360-0777fbb75fd5">
+        <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
+        <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Process Order</text>
+      </g>
+      <g class="activity-node" id="node-b04c5741-7ea1-44f8-bdd9-513a852ee1d8">
+        <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
+        <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Send Email Confirmation</text>
+      </g>
+      <g class="activity-node" id="node-5008deba-0c99-457d-b98f-4610e69f5fcb">
+        <rect class="join-node" fill="#000000" height="80" width="10" x="0" y="0"/>
+      </g>
+      <g class="activity-node" id="node-9a809298-5785-4484-92fd-311b1776f26e">
+        <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
+        <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Process Payment</text>
+      </g>
+      <g class="activity-node" id="node-5717a400-08fa-42db-8fec-2c78ee2dbf5e">
+        <rect class="object-node" fill="#FFFFFF" height="60" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
+        <text class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="20.0">Order</text>
+        <text class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" font-style="italic" text-anchor="middle" x="60.0" y="40.0">[Completed]</text>
+      </g>
+      <g class="activity-node" id="node-eb810ef6-549e-4353-a90b-ca9c8382cb67">
+        <circle class="final-node" cx="15.0" cy="15.0" fill="#FFFFFF" r="15.0" stroke="#000000" stroke-width="1"/>
+        <circle class="activity-final-inner" cx="15.0" cy="15.0" fill="#000000" r="10.0"/>
+      </g>
+    </g>
+  </g>
+</svg>
