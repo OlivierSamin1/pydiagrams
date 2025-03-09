@@ -1,0 +1,9 @@
+---
+description: this rule is helfull for following the flow of the agent properly
+globs: 
+alwaysApply: false
+---
+
+# Your rule content
+- always ask and wait for validation before executing a command or execcuting a task
+- after a task is executed, always explain what has been done in this task

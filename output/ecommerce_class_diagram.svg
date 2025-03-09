@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" baseProfile="full" height="600px" version="1.1" width="800px">
+  <defs>
+    <style type="text/css"><![CDATA[
+            .element { fill: #ffffff; stroke: #000000; stroke-width: 1; }
+            .relationship { stroke: #000000; stroke-width: 1; }
+            .text { font-family: Arial, sans-serif; font-size: 12px; }
+            .element-name { font-weight: bold; }
+            .element-attribute { font-style: normal; }
+            .element-method { font-style: normal; }
+            .relationship-label { font-size: 10px; }
+        ]]></style>
+    <marker id="arrow" markerHeight="10" markerWidth="10" orient="auto" refX="10" refY="5">
+      <path d="M0,0 L10,5 L0,10 L2,5 z" fill="#000000"/>
+    </marker>
+    <marker id="inheritance" markerHeight="10" markerWidth="10" orient="auto" refX="10" refY="5">
+      <path d="M0,0 L10,5 L0,10 z" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    </marker>
+    <marker id="aggregation" markerHeight="10" markerWidth="10" orient="auto" refX="10" refY="5">
+      <path d="M0,5 L5,0 L10,5 L5,10 z" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    </marker>
+    <marker id="composition" markerHeight="10" markerWidth="10" orient="auto" refX="10" refY="5">
+      <path d="M0,5 L5,0 L10,5 L5,10 z" fill="#000000"/>
+    </marker>
+  </defs>
+  <g id="diagram">
+    <g id="relationships">
+      <g class="relationship" id="relationship-e4a98e79-f05e-4b76-a0e2-b7516424d4c8">
+        <path d="M50,40 L150,140" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="100.0" y="85.0">places</text>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="65.0" y="50.0">1</text>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="135.0" y="120.0">*</text>
+      </g>
+      <g class="relationship" id="relationship-84007058-cb5d-4858-a333-6268f2e9d960">
+        <path d="M50,40 L150,140" fill="none" marker-end="url(#composition)" stroke="#000000" stroke-width="1"/>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="100.0" y="85.0">contains</text>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="65.0" y="50.0">1</text>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="135.0" y="120.0">*</text>
+      </g>
+      <g class="relationship" id="relationship-d7eb5665-d822-4873-9b63-68c67d40cac5">
+        <path d="M50,40 L150,140" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="100.0" y="85.0">refers to</text>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="65.0" y="50.0">*</text>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="135.0" y="120.0">1</text>
+      </g>
+      <g class="relationship" id="relationship-e2267ccf-7c6b-472a-9df8-23ed7baf5458">
+        <path d="M50,40 L150,140" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="100.0" y="85.0">has</text>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="65.0" y="50.0">1</text>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="135.0" y="120.0">1..*</text>
+      </g>
+      <g class="relationship" id="relationship-d36d26bb-9bc0-45ab-b152-f51ada74222d">
+        <path d="M50,40 L150,140" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="relationship" id="relationship-4a0bc86c-ee49-481b-a7dd-0b69c419c147">
+        <path d="M50,40 L150,140" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+      </g>
+      <g class="relationship" id="relationship-cfe0e174-188e-4f98-870f-e94adb0e4606">
+        <path d="M50,40 L150,140" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="100.0" y="85.0">«use»</text>
+      </g>
+      <g class="relationship" id="relationship-9ea90d0e-c858-4b57-9898-cf58d321fcec">
+        <path d="M50,40 L150,140" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
+        <text class="relationship-label" fill="#000000" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="100.0" y="85.0">«use»</text>
+      </g>
+    </g>
+    <g id="elements">
+      <g class="element" id="element-e4897607-8eae-4afa-a931-993485a2036c">
+        <rect fill="#FFFFFF" height="80" rx="0" ry="0" stroke="#000000" stroke-width="1" width="100" x="0" y="0"/>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="30" y2="30"/>
+        <text class="element-name" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" x="50.0" y="20">Customer</text>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="60" y2="60"/>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="45">- id: int</text>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="60">- name: str</text>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="75">- email: str</text>
+        <text class="element-method" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="75">+ register(email: str, password: str): bool</text>
+        <text class="element-method" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="90">+ login(email: str, password: str): bool</text>
+        <text class="element-method" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="105">+ update_profile(): bool</text>
+      </g>
+      <g class="element" id="element-41a71283-4151-4b04-ad8d-5a92a7f6d516">
+        <rect fill="#FFFFFF" height="80" rx="0" ry="0" stroke="#000000" stroke-width="1" width="100" x="0" y="0"/>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="30" y2="30"/>
+        <text class="element-name" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" x="50.0" y="20">Order</text>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="60" y2="60"/>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="45">- id: int</text>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="60">- date: datetime</text>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="75">- status: OrderStatus</text>
+        <text class="element-method" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="75">+ place(): bool</text>
+        <text class="element-method" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="90">+ cancel(): bool</text>
+        <text class="element-method" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="105">+ ship(): bool</text>
+      </g>
+      <g class="element" id="element-3a0af50d-a652-4eba-abc2-5364f50524fb">
+        <rect fill="#FFFFFF" height="80" rx="0" ry="0" stroke="#000000" stroke-width="1" width="100" x="0" y="0"/>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="30" y2="30"/>
+        <text class="element-name" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" x="50.0" y="20">OrderItem</text>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="60" y2="60"/>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="45">- quantity: int</text>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="60">- price: float</text>
+        <text class="element-method" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="75">+ calculate_subtotal(): float</text>
+      </g>
+      <g class="element" id="element-6dae6f24-f2b2-4e6b-9d77-aa3a2580d09a">
+        <rect fill="#FFFFFF" height="80" rx="0" ry="0" stroke="#000000" stroke-width="1" width="100" x="0" y="0"/>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="30" y2="30"/>
+        <text class="element-name" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" x="50.0" y="20">Product</text>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="60" y2="60"/>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="45">- id: int</text>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="60">- name: str</text>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="75">- description: str</text>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="90">- price: float</text>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="105">- stock: int</text>
+        <text class="element-method" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="75">+ update_stock(quantity: int): bool</text>
+      </g>
+      <g class="element" id="element-9997f76e-9a51-49bc-b5d3-346c48877cb2">
+        <rect fill="#FFFFFF" height="80" rx="0" ry="0" stroke="#000000" stroke-width="1" width="100" x="0" y="0"/>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="30" y2="30"/>
+        <text class="element-name" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" x="50.0" y="20">Payment</text>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="60" y2="60"/>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="45">- id: int</text>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="60">- amount: float</text>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="75">- date: datetime</text>
+        <text class="element-attribute" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="90">- status: PaymentStatus</text>
+        <text class="element-method" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="75">+ process(): bool</text>
+        <text class="element-method" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="90">+ refund(): bool</text>
+      </g>
+      <g class="element" id="element-1261b8aa-508c-499b-b39b-562226276dd9">
+        <rect fill="#FFFFFF" height="80" rx="0" ry="0" stroke="#000000" stroke-width="1" width="100" x="0" y="0"/>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="30" y2="30"/>
+        <text class="element-name" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" x="50.0" y="20">Payable</text>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="60" y2="60"/>
+        <text class="element-method" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="75">+ process_payment(amount: float): bool</text>
+      </g>
+      <g class="element" id="element-5e44f961-d6e3-4c9d-a47b-64b32d0b72d0">
+        <rect fill="#FFFFFF" height="80" rx="0" ry="0" stroke="#000000" stroke-width="1" width="100" x="0" y="0"/>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="30" y2="30"/>
+        <text class="element-name" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" x="50.0" y="20">Shippable</text>
+        <line stroke="#000000" stroke-width="1" x1="0" x2="100" y1="60" y2="60"/>
+        <text class="element-method" font-family="Arial, Helvetica, sans-serif" font-size="12" x="10" y="75">+ ship(address: str): bool</text>
+      </g>
+      <g class="element" id="element-fa347c24-c8a9-41a1-a7ab-893d063a3aee">
+        <rect fill="#FFFFFF" height="80" rx="0" ry="0" stroke="#000000" stroke-width="1" width="100" x="0" y="0"/>
+        <text alignment-baseline="middle" class="element-name" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="50.0" y="40.0">OrderStatus</text>
+      </g>
+      <g class="element" id="element-9cf866cb-6f5a-42a4-ace4-0bc3bdb2318d">
+        <rect fill="#FFFFFF" height="80" rx="0" ry="0" stroke="#000000" stroke-width="1" width="100" x="0" y="0"/>
+        <text alignment-baseline="middle" class="element-name" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="50.0" y="40.0">PaymentStatus</text>
+      </g>
+    </g>
+  </g>
+</svg>
