@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg baseProfile="full" height="600px" version="1.1" width="800px" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"><![CDATA[
+            .state {
+                fill: #FFFFFF;
+                stroke: #000000;
+                stroke-width: 1px;
+            }
+            .composite-state {
+                fill: #FAFAFA;
+                stroke: #000000;
+                stroke-width: 1px;
+            }
+            .state-name {
+                font-family: Arial, sans-serif;
+                font-size: 14px;
+                text-anchor: middle;
+            }
+            .state-divider {
+                stroke: #000000;
+                stroke-width: 1px;
+            }
+            .activity-label {
+                font-family: Arial, sans-serif;
+                font-size: 12px;
+                text-anchor: start;
+            }
+            .transition {
+                stroke: #000000;
+                stroke-width: 1px;
+                fill: none;
+            }
+            .transition-arrow {
+                fill: #000000;
+            }
+            .transition-label {
+                font-family: Arial, sans-serif;
+                font-size: 12px;
+                text-anchor: middle;
+                fill: #000000;
+            }
+            .initial-state {
+                fill: #000000;
+            }
+            .final-state-outer {
+                fill: none;
+                stroke: #000000;
+                stroke-width: 1px;
+            }
+            .final-state-inner {
+                fill: #000000;
+            }
+            .choice-pseudostate {
+                fill: #FFFFFF;
+                stroke: #000000;
+                stroke-width: 1px;
+            }
+            .junction-pseudostate {
+                fill: #000000;
+                stroke: none;
+            }
+            .history-pseudostate {
+                fill: #FFFFFF;
+                stroke: #000000;
+                stroke-width: 1px;
+            }
+            .terminate-pseudostate {
+                stroke: #000000;
+                stroke-width: 2px;
+            }
+            .entry-exit-point {
+                fill: #FFFFFF;
+                stroke: #000000;
+                stroke-width: 1px;
+            }
+            .region {
+                fill: #FAFAFA;
+                stroke: #999999;
+                stroke-width: 1px;
+                stroke-dasharray: 4 2;
+            }
+            .region-name {
+                font-family: Arial, sans-serif;
+                font-size: 12px;
+                font-style: italic;
+                text-anchor: start;
+            }
+        ]]></style><marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="10" refY="5"><path class="transition-arrow" d="M0,0 L0,10 L10,5 z" /></marker></defs><g id="main"><g id="state-3ce12392-eb2e-41c8-82a3-72ad8fc4bc50"><circle class="initial-state" cx="329.0" cy="1027.0" r="10" /></g><g id="state-0ff2c5e9-a78f-408b-ad59-a02b8a78ea64"><rect class="state" height="80" rx="10" ry="10" width="120" x="269.0" y="871.0" /><text class="state-name" x="329.0" y="891.0">Locked</text><line class="state-divider" x1="279.0" x2="379.0" y1="901.0" y2="901.0" /><text class="activity-label" x="284.0" y="911.0">entry / turn_on_red_led()</text><text class="activity-label" x="284.0" y="926.0">do / display_locked_status()</text></g><g id="state-c86df42c-72fc-4341-b963-6d19b7689095"><rect class="state" height="80" rx="10" ry="10" width="120" x="-6.0" y="491.0" /><text class="state-name" x="54.0" y="511.0">Unlocked</text><line class="state-divider" x1="4.0" x2="104.0" y1="521.0" y2="521.0" /><text class="activity-label" x="9.0" y="531.0">entry / turn_on_green_led()</text><text class="activity-label" x="9.0" y="546.0">exit / beep()</text></g><g id="state-75ba524e-baa4-494e-85a0-e6cbb9531108"><rect class="state" height="80" rx="10" ry="10" width="120" x="269.0" y="730.0" /><text class="state-name" x="329.0" y="750.0">Authenticating</text><line class="state-divider" x1="279.0" x2="379.0" y1="760.0" y2="760.0" /><text class="activity-label" x="284.0" y="770.0">entry / start_timer()</text><text class="activity-label" x="284.0" y="785.0">exit / stop_timer()</text></g><g id="state-c027054d-b759-472d-982c-2ed34439da9d"><rect class="state" height="80" rx="10" ry="10" width="120" x="416.0" y="491.0" /><text class="state-name" x="476.0" y="511.0">Error</text><line class="state-divider" x1="426.0" x2="526.0" y1="521.0" y2="521.0" /><text class="activity-label" x="431.0" y="531.0">entry / flash_red_led()</text><text class="activity-label" x="431.0" y="546.0">do / display_error_message()</text></g><g id="state-e844c243-f70c-4018-9d3a-27ef92b7c39f"><rect class="state" height="80" rx="10" ry="10" width="120" x="225.0" y="137.0" /><text class="state-name" x="285.0" y="157.0">Maintenance</text><line class="state-divider" x1="235.0" x2="335.0" y1="167.0" y2="167.0" /><text class="activity-label" x="240.0" y="177.0">reset / clear_error_log()</text></g><g id="state-1a9b254d-6c6c-4965-a4eb-9374b172f712"><rect class="composite-state" height="120" rx="10" ry="10" width="160" x="416.0" y="314.0" /><text class="state-name" x="496.0" y="334.0">Alarm Active</text><line class="state-divider" x1="426.0" x2="566.0" y1="344.0" y2="344.0" /><text class="activity-label" x="431.0" y="354.0">entry / start_alarm()</text><text class="activity-label" x="431.0" y="374.0">exit / stop_alarm()</text><g id="state-6f3584a8-3765-4d33-9e88-6d8a0a678904"><rect class="state" height="80" rx="10" ry="10" width="120" x="436.0" y="404.0" /><text class="state-name" x="496.0" y="424.0">Silent Alarm</text><line class="state-divider" x1="446.0" x2="546.0" y1="434.0" y2="434.0" /><text class="activity-label" x="451.0" y="444.0">do / notify_security()</text></g><g id="state-0bf44336-2455-40f7-8bcb-ff3c4aba4d24"><rect class="state" height="80" rx="10" ry="10" width="120" x="436.0" y="534.0" /><text class="state-name" x="496.0" y="554.0">Audible Alarm</text><line class="state-divider" x1="446.0" x2="546.0" y1="564.0" y2="564.0" /><text class="activity-label" x="451.0" y="574.0">do / sound_siren()</text></g></g><g id="state-6f3584a8-3765-4d33-9e88-6d8a0a678904"><rect class="state" height="80" rx="10" ry="10" width="120" x="716.0" y="137.0" /><text class="state-name" x="776.0" y="157.0">Silent Alarm</text><line class="state-divider" x1="726.0" x2="826.0" y1="167.0" y2="167.0" /><text class="activity-label" x="731.0" y="177.0">do / notify_security()</text></g><g id="state-0bf44336-2455-40f7-8bcb-ff3c4aba4d24"><rect class="state" height="80" rx="10" ry="10" width="120" x="649.0" y="-4.0" /><text class="state-name" x="709.0" y="16.0">Audible Alarm</text><line class="state-divider" x1="659.0" x2="759.0" y1="26.0" y2="26.0" /><text class="activity-label" x="664.0" y="36.0">do / sound_siren()</text></g><g id="state-473a4f47-2658-43ea-897b-7871ff3b6338"><polygon class="choice-pseudostate" points="329.0,640.5 339.0,650.5 329.0,660.5 319.0,650.5" /></g><g id="state-7ec72057-bfe0-45de-bff4-4b5b6f406d20"><circle class="final-state-outer" cx="285.0" cy="36.0" r="16" /><circle class="final-state-inner" cx="285.0" cy="36.0" r="10" /></g><g id="transition-3ce12392-eb2e-41c8-82a3-72ad8fc4bc50-0ff2c5e9-a78f-408b-ad59-a02b8a78ea64"><path class="transition" d="M329.0,1015.9 L329.0,1002.7 L329.0,978.65 L329.0,957.04" /><polygon class="transition-arrow" points="329.0,957.04 334.0,965.7002540378444 324.0,965.7002540378444" /><rect fill="white" height="16" stroke="none" width="136" x="339.0" y="966.65" /><text class="transition-label" x="344.0" y="978.65">/ initialize_system()</text></g><g id="transition-0ff2c5e9-a78f-408b-ad59-a02b8a78ea64-75ba524e-baa4-494e-85a0-e6cbb9531108"><path class="transition" d="M329.0,874.92 L329.0,857.15 L329.0,835.35 L329.0,816.31" /><polygon class="transition-arrow" points="329.0,816.31 334.0,824.9702540378444 324.0,824.9702540378444" /><rect fill="white" height="16" stroke="none" width="190" x="339.0" y="823.35" /><text class="transition-label" x="344.0" y="835.35">card_swiped / read_card_data()</text></g><g id="transition-75ba524e-baa4-494e-85a0-e6cbb9531108-473a4f47-2658-43ea-897b-7871ff3b6338"><path class="transition" d="M329.0,733.75 L329.0,714.78 L329.0,691.91 L329.0,675.1" /><polygon class="transition-arrow" points="329.0,675.1 334.0,683.7602540378444 324.0,683.7602540378444" /><rect fill="white" height="16" stroke="none" width="154" x="339.0" y="679.91" /><text class="transition-label" x="344.0" y="691.91">authentication_completed</text></g><g id="transition-473a4f47-2658-43ea-897b-7871ff3b6338-c86df42c-72fc-4341-b963-6d19b7689095"><path class="transition" d="M316.53,648.46 L275.19,644.82 L143.3,631.64 L108.0,609.0 L95.158,600.76 L84.496,588.28 L76.134,575.75" /><polygon class="transition-arrow" points="76.134,575.75 85.10021677511205,580.1779743384193 76.78237012317936,585.7289586722949" /><rect fill="white" height="16" stroke="none" width="190" x="111.09798164464466" y="584.373730032864" /><text class="transition-label" x="116.09798164464466" y="596.373730032864">[is_authorized] / log_access()</text></g><g id="transition-473a4f47-2658-43ea-897b-7871ff3b6338-c027054d-b759-472d-982c-2ed34439da9d"><path class="transition" d="M325.12,639.53 L321.2,627.64 L316.88,607.64 L326.0,594.0 L345.15,565.36 L380.23,549.94 L411.64,541.63" /><polygon class="transition-arrow" points="411.64,541.63 404.54662464403316,548.6786896696735 401.98896800468634,539.0113015779909" /><rect fill="white" height="16" stroke="none" width="244" x="333.469491488809" y="590.3373726083532" /><text class="transition-label" x="338.469491488809" y="602.3373726083532">[!is_authorized] / log_failed_attempt()</text></g><g id="transition-c86df42c-72fc-4341-b963-6d19b7689095-0ff2c5e9-a78f-408b-ad59-a02b8a78ea64"><path class="transition" d="M45.695,567.04 L38.847,603.99 L33.508,662.88 L56.0,707.0 L100.0,793.32 L199.7,852.36 L265.65,883.65" /><polygon class="transition-arrow" points="265.65,883.65 255.6824634198487,884.4551177077581 259.9689793219691,875.4204189623174" /><rect fill="white" height="16" stroke="none" width="148" x="37.63634050800418" y="701.8126797210782" /><text class="transition-label" x="42.63634050800418" y="713.8126797210782">timeout / secure_door()</text></g><g id="transition-c86df42c-72fc-4341-b963-6d19b7689095-0ff2c5e9-a78f-408b-ad59-a02b8a78ea64"><path class="transition" d="M45.695,567.04 L38.847,603.99 L33.508,662.88 L56.0,707.0 L100.0,793.32 L199.7,852.36 L265.65,883.65" /><polygon class="transition-arrow" points="265.65,883.65 255.6824634198487,884.4551177077581 259.9689793219691,875.4204189623174" /><rect fill="white" height="16" stroke="none" width="226" x="37.63634050800418" y="701.8126797210782" /><text class="transition-label" x="42.63634050800418" y="713.8126797210782">close_button_pressed / secure_door()</text></g><g id="transition-c027054d-b759-472d-982c-2ed34439da9d-0ff2c5e9-a78f-408b-ad59-a02b8a78ea64"><path class="transition" d="M530.2,545.1 L555.75,554.29 L583.89,569.46 L599.0,594.0 L658.89,691.25 L636.6,763.29 L560.0,848.0 L537.79,872.57 L453.56,890.59 L393.23,900.69" /><polygon class="transition-arrow" points="393.23,900.69 400.9458129727623,894.3286927311005 402.5969601825267,904.191436410812" /><rect fill="white" height="16" stroke="none" width="232" x="617.2702568786788" y="746.8562135733724" /><text class="transition-label" x="622.2702568786788" y="758.8562135733724">reset_button_pressed / clear_errors()</text></g><g id="transition-c027054d-b759-472d-982c-2ed34439da9d-1a9b254d-6c6c-4965-a4eb-9374b172f712"><path class="transition" d="M476.0,494.59 L476.0,477.68 L476.0,456.69 L476.0,436.17" /><polygon class="transition-arrow" points="476.0,436.17 481.0,444.8302540378444 471.0,444.8302540378444" /><rect fill="white" height="16" stroke="none" width="340" x="486.0" y="444.69" /><text class="transition-label" x="491.0" y="456.69">multiple_failures [failure_count &gt; 3] / trigger_alarm()</text></g><g id="transition-1a9b254d-6c6c-4965-a4eb-9374b172f712-e844c243-f70c-4018-9d3a-27ef92b7c39f"><path class="transition" d="M404.0,337.04 L360.22,323.23 L307.75,298.38 L281.0,255.0 L275.19,245.58 L273.55,234.21 L273.99,223.14" /><polygon class="transition-arrow" points="273.99,223.14 278.6421070105098,231.99199979455295 268.6499968088774,231.59484274950162" /><rect fill="white" height="16" stroke="none" width="292" x="288.7676945383751" y="235.12688269014444" /><text class="transition-label" x="293.7676945383751" y="247.12688269014444">key_switch_activated / enter_maintenance_mode()</text></g><g id="transition-e844c243-f70c-4018-9d3a-27ef92b7c39f-7ec72057-bfe0-45de-bff4-4b5b6f406d20"><path class="transition" d="M285.0,140.92 L285.0,117.39 L285.0,86.822 L285.0,64.938" /><polygon class="transition-arrow" points="285.0,64.938 290.0,73.59825403784438 280.0,73.59825403784438" /><rect fill="white" height="16" stroke="none" width="190" x="295.0" y="74.822" /><text class="transition-label" x="300.0" y="86.822">shutdown_command / power_off()</text></g><g id="transition-6f3584a8-3765-4d33-9e88-6d8a0a678904-0bf44336-2455-40f7-8bcb-ff3c4aba4d24"><path class="transition" d="M759.09,140.92 L750.36,122.82 L739.63,100.54 L730.33,81.257" /><polygon class="transition-arrow" points="730.33,81.257 738.5956571319432,86.88540227570473 729.5884892124932,91.22947019308711" /><rect fill="white" height="16" stroke="none" width="298" x="748.1444103090813" y="82.03148911057256" /><text class="transition-label" x="753.1444103090813" y="94.03148911057256">timeout [alarm_duration &gt; 60] / escalate_alarm()</text></g></g></svg>
