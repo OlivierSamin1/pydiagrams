@@ -59,13 +59,6 @@ def main():
     )
     
     parser.add_argument(
-        "--theme",
-        choices=["default", "blue", "green", "purple", "high-contrast"],
-        default="default",
-        help="Theme for HTML output (default: default)"
-    )
-    
-    parser.add_argument(
         "--dark-mode",
         action="store_true",
         help="Use dark mode for HTML output"
@@ -95,7 +88,6 @@ def main():
         print(f"Output file: {output_path}")
         print(f"Quality: {args.quality}")
         if args.format == "html":
-            print(f"Theme: {args.theme}")
             print(f"Dark mode: {'enabled' if args.dark_mode else 'disabled'}")
     
     try:
@@ -104,7 +96,6 @@ def main():
             input_file,
             output_path,
             args.format,
-            args.theme,
             args.dark_mode
         )
         

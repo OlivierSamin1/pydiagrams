@@ -62,7 +62,6 @@ def generate_diagram_from_file(
     file_path: Union[str, Path],
     output_path: Optional[Union[str, Path]] = None,
     output_format: str = 'svg',
-    theme: str = 'default',
     dark_mode: bool = False
 ) -> str:
     """
@@ -72,7 +71,6 @@ def generate_diagram_from_file(
         file_path: Path to the diagram file
         output_path: Path where to save the generated diagram (if None, it will use the input filename with appropriate extension)
         output_format: Output format ('svg', 'png', 'html', 'pdf')
-        theme: Theme to use for HTML output ('default', 'blue', 'green', 'purple', 'high-contrast')
         dark_mode: Whether to use dark mode for HTML output
 
     Returns:
@@ -100,8 +98,8 @@ def generate_diagram_from_file(
         try:
             from pydiagrams.renderers.html_renderer import HTMLRenderer
             
-            # Create an HTML renderer with theme options
-            renderer = HTMLRenderer(theme=theme, dark_mode=dark_mode)
+            # Create an HTML renderer with dark mode option
+            renderer = HTMLRenderer(dark_mode=dark_mode)
             
             # Store the raw content in the data for rendering
             data['raw_content'] = content

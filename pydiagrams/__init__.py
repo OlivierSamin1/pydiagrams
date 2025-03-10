@@ -51,7 +51,7 @@ from pydiagrams.parsers.diagram_utils import (
 )
 
 # Add convenience functions to the top-level package
-def create_diagram_from_file(file_path, output_path=None, output_format='svg', theme='default', dark_mode=False):
+def create_diagram_from_file(file_path, output_path=None, output_format='svg', dark_mode=False):
     """
     Create a diagram from a Mermaid or PlantUML file.
 
@@ -59,10 +59,9 @@ def create_diagram_from_file(file_path, output_path=None, output_format='svg', t
         file_path: Path to the diagram file
         output_path: Path where to save the generated diagram (optional)
         output_format: Output format ('svg', 'png', 'html', 'pdf')
-        theme: Theme to use for HTML output ('default', 'blue', 'green', 'purple', 'high-contrast')
         dark_mode: Whether to use dark mode for HTML output
 
     Returns:
         Path to the generated diagram file
     """
-    return generate_diagram_from_file(file_path, output_path, output_format, theme, dark_mode) 
+    return generate_diagram_from_file(file_path, output_path, output_format, dark_mode) 

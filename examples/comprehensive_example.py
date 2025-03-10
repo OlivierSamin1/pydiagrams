@@ -5,13 +5,13 @@ Comprehensive example demonstrating all features of PyDiagrams.
 This example shows how to:
 1. Generate diagrams from Mermaid and PlantUML files
 2. Use different output formats (SVG, PNG, HTML, PDF)
-3. Apply themes and styling
+3. Apply dark mode styling
 4. Use the interactive features
 """
 
 import os
 import sys
-import webbrowser
+import subprocess
 from pathlib import Path
 
 # Add the parent directory to the Python path
@@ -48,65 +48,58 @@ def main():
     create_diagram_from_file(plantuml_file, plantuml_png, output_format="png")
     print(f"Generated PNG from PlantUML: {plantuml_png}")
     
-    # Part 2: Interactive HTML with themes
-    print("\nPart 2: Interactive HTML with Themes")
-    print("-----------------------------------")
+    # Part 2: Interactive HTML with light/dark mode
+    print("\nPart 2: Interactive HTML")
+    print("----------------------")
     
-    # Generate HTML with default theme
+    # Generate HTML with light mode
     mermaid_html = output_dir / "mermaid_interactive.html"
     create_diagram_from_file(mermaid_file, mermaid_html, output_format="html")
     print(f"Generated interactive HTML from Mermaid: {mermaid_html}")
     
-    # Generate HTML with blue theme and dark mode
-    plantuml_html = output_dir / "plantuml_interactive.html"
+    # Generate HTML with dark mode
+    plantuml_html = output_dir / "plantuml_interactive_dark.html"
     create_diagram_from_file(
         plantuml_file, 
         plantuml_html, 
         output_format="html",
-        theme="blue",
         dark_mode=True
     )
-    print(f"Generated interactive HTML from PlantUML (Blue theme, Dark mode): {plantuml_html}")
+    print(f"Generated interactive HTML from PlantUML with dark mode: {plantuml_html}")
     
-    # Part 3: Accessibility options
-    print("\nPart 3: Accessibility Options")
-    print("----------------------------")
-    
-    # Generate HTML with high contrast theme
-    accessibility_html = output_dir / "accessibility_example.html"
-    create_diagram_from_file(
-        mermaid_file, 
-        accessibility_html, 
-        output_format="html",
-        theme="high-contrast"
-    )
-    print(f"Generated accessible HTML diagram: {accessibility_html}")
-    
-    # Ask to open the examples
-    print("\nDo you want to open the interactive examples in your browser? (y/n)")
-    choice = input().strip().lower()
+    # Ask to open the interactive examples in your browser? (y/n)
+    choice = input("Do you want to open the interactive examples in Brave browser? (y/n): ").strip().lower()
     
     if choice in ('y', 'yes'):
-        print("Opening examples in browser...")
+        print("Opening examples in Brave browser...")
         
-        # Open the interactive examples
-        webbrowser.open(f"file://{mermaid_html}")
-        
-        # Wait a moment before opening the next file
-        import time
-        time.sleep(1)
-        
-        webbrowser.open(f"file://{plantuml_html}")
-        
-        print("\nInteractive Features:")
-        print("1. Zoom and Pan: Use the zoom controls or mouse wheel to zoom, click and drag to pan")
-        print("2. Theme Selection: Use the theme selector in the top-right corner")
-        print("3. Dark Mode: Toggle dark mode with the button in the top-right corner")
-        print("4. Export: Click the Export button to save as SVG, PNG, or PDF")
-        
-        print("\nCommand-line Equivalent:")
-        print(f"pydiagrams {mermaid_file} -o {mermaid_html} -f html --open")
-        print(f"pydiagrams {plantuml_file} -o {plantuml_html} -f html --theme blue --dark-mode --open")
+        try:
+            # Use absolute paths for the files
+            mermaid_html_abs = os.path.abspath(mermaid_html)
+            plantuml_html_abs = os.path.abspath(plantuml_html)
+            
+            # Open with Brave using command-line arguments to allow file access
+            subprocess.run(["brave-browser", "--allow-file-access-from-files", f"file://{mermaid_html_abs}"])
+            
+            # Wait a moment before opening the next file
+            import time
+            time.sleep(1)
+            
+            subprocess.run(["brave-browser", "--allow-file-access-from-files", f"file://{plantuml_html_abs}"])
+            
+            print("\nInteractive Features:")
+            print("1. Zoom and Pan: Use the zoom controls or mouse wheel to zoom, click and drag to pan")
+            print("2. Dark Mode: Toggle dark mode with the button in the top-right corner")
+            print("3. Export: Click the Export button to save as SVG, PNG, or PDF")
+            
+            print("\nCommand-line Equivalent:")
+            print(f"pydiagrams {mermaid_file} -o {mermaid_html} -f html --open")
+            print(f"pydiagrams {plantuml_file} -o {plantuml_html} -f html --dark-mode --open")
+        except Exception as e:
+            print(f"Error opening browser: {e}")
+            print("You can manually open the files in Brave with the --allow-file-access-from-files flag:")
+            print(f"brave-browser --allow-file-access-from-files file://{mermaid_html_abs}")
+            print(f"brave-browser --allow-file-access-from-files file://{plantuml_html_abs}")
 
 
 if __name__ == "__main__":

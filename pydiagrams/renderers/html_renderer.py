@@ -19,7 +19,7 @@ class HTMLRenderer:
     # Default PlantUML server URL
     PLANTUML_SERVER = "http://www.plantuml.com/plantuml"
     
-    def __init__(self, width: int = 800, height: int = 600, interactive: bool = True, theme: str = 'default', dark_mode: bool = False):
+    def __init__(self, width: int = 800, height: int = 600, interactive: bool = True, dark_mode: bool = False):
         """
         Initialize the HTML renderer.
         
@@ -27,13 +27,11 @@ class HTMLRenderer:
             width: Canvas width
             height: Canvas height
             interactive: Whether to enable interactive features
-            theme: Theme to use ('default', 'blue', 'green', 'purple', 'high-contrast')
             dark_mode: Whether to use dark mode
         """
         self.width = width
         self.height = height
         self.interactive = interactive
-        self.theme = theme
         self.dark_mode = dark_mode
         
         # Set up Jinja2 environment
@@ -84,7 +82,6 @@ class HTMLRenderer:
             'width': self.width,
             'height': self.height,
             'interactive': self.interactive,
-            'theme': self.theme,
             'dark_mode': self.dark_mode,
             'static_url': f"{output_path_obj.stem}_files"
         }
