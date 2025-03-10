@@ -30,6 +30,10 @@ PyDiagrams is a versatile library designed to create professional diagrams throu
 - Code structure visualization
 - Dependency graphs
 
+### Text-Based Diagrams
+- Mermaid syntax
+- PlantUML syntax
+
 ## Features
 
 - Intuitive, Pythonic API for diagram creation
@@ -37,6 +41,7 @@ PyDiagrams is a versatile library designed to create professional diagrams throu
 - Customizable styling and theming
 - Extensible architecture for custom diagram types
 - Integration with documentation tools
+- Support for Mermaid and PlantUML files
 
 ## Installation
 
@@ -69,6 +74,35 @@ diagram.add_relationship(Relationship(class1, class2, "1", "*", "places"))
 
 # Render the diagram
 diagram.render("class_diagram.svg")
+```
+
+## Generating Diagrams from Mermaid or PlantUML Files
+
+### Using Python
+
+```python
+from pydiagrams import create_diagram_from_file
+
+# Generate a diagram from a Mermaid file
+create_diagram_from_file("my_diagram.mmd", "output.svg")
+
+# Generate a diagram from a PlantUML file
+create_diagram_from_file("my_diagram.puml", "output.png", output_format="png")
+```
+
+### Using the Command Line
+
+PyDiagrams includes a command-line interface for quick diagram generation:
+
+```bash
+# Generate SVG from a Mermaid file
+pydiagrams my_diagram.mmd -o output.svg
+
+# Generate PNG from a PlantUML file
+pydiagrams my_diagram.puml -o output.png -f png
+
+# Get help
+pydiagrams --help
 ```
 
 ## Documentation

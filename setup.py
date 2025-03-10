@@ -33,6 +33,7 @@ setup(
         "svgwrite>=1.4.0",
         "reportlab>=3.6.0",
         "typing-extensions>=4.0.0",
+        "requests>=2.25.0",
     ],
     extras_require={
         "dev": [
@@ -44,6 +45,11 @@ setup(
             "flake8>=3.9.0",
             "sphinx>=4.0.0",
             "sphinx-rtd-theme>=0.5.0",
+        ],
+    },
+    entry_points={
+        "console_scripts": [
+            "pydiagrams=pydiagrams.cli:main",
         ],
     },
 ) 
