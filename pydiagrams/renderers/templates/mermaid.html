@@ -11,6 +11,173 @@
 {% endblock %}
 
 {% block libraries %}
+{% if use_mermaid_umd %}
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: document.body.classList.contains('dark-mode') ? 'dark' : 'default',
+            securityLevel: 'loose',
+            fontFamily: '"Courier New", Courier, monospace',
+        });
+        
+        // Update theme when it changes
+        document.addEventListener('themeChanged', function(e) {
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: e.detail.darkMode ? 'dark' : 'default',
+            });
+            
+            // Re-render the diagram
+            const container = document.querySelector("#diagram");
+            container.innerHTML = `<div class="mermaid">${mermaidSource}</div>`;
+            mermaid.init(undefined, '.mermaid');
+        });
+        
+        // Store the original source for re-rendering
+        const mermaidSource = `{{ diagram_content | safe }}`;
+    });
+    
+    // Export functionality
+    window.exportDiagramSVG = function(filename, quality) {
+        const svgElement = document.querySelector('.mermaid svg');
+        if (!svgElement) {
+            alert('No SVG element found to export');
+            return;
+        }
+        
+        // Clone the SVG to avoid modifying the displayed one
+        const svgClone = svgElement.cloneNode(true);
+        
+        // Set explicit dimensions if needed
+        svgClone.setAttribute('width', svgElement.clientWidth);
+        svgClone.setAttribute('height', svgElement.clientHeight);
+        
+        // Create a blob and download link
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const blob = new Blob([svgData], {type: 'image/svg+xml'});
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${filename}.svg`;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+    };
+    
+    window.exportDiagramPNG = function(filename, quality) {
+        const svgElement = document.querySelector('.mermaid svg');
+        if (!svgElement) {
+            alert('No SVG element found to export');
+            return;
+        }
+        
+        // Clone the SVG to avoid modifying the displayed one
+        const svgClone = svgElement.cloneNode(true);
+        
+        // Set explicit dimensions for better quality
+        const width = svgElement.clientWidth;
+        const height = svgElement.clientHeight;
+        svgClone.setAttribute('width', width);
+        svgClone.setAttribute('height', height);
+        
+        // Create a canvas for PNG rendering
+        const canvas = document.createElement('canvas');
+        canvas.width = width * quality * 2; // Higher resolution
+        canvas.height = height * quality * 2;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(quality * 2, quality * 2); // Scale for higher quality
+        
+        // Convert SVG to a data URL
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const svg64 = btoa(unescape(encodeURIComponent(svgData)));
+        const img = new Image();
+        
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0);
+            
+            // Create a download link for the PNG
+            const a = document.createElement('a');
+            a.href = canvas.toDataURL('image/png');
+            a.download = `${filename}.png`;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Clean up
+            document.body.removeChild(a);
+        };
+        
+        img.src = `data:image/svg+xml;base64,${svg64}`;
+    };
+    
+    window.exportDiagramPDF = function(filename, quality) {
+        const svgElement = document.querySelector('.mermaid svg');
+        if (!svgElement) {
+            alert('No SVG element found to export');
+            return;
+        }
+        
+        // Clone the SVG to avoid modifying the displayed one
+        const svgClone = svgElement.cloneNode(true);
+        
+        // Set explicit dimensions for better quality
+        const width = svgElement.clientWidth;
+        const height = svgElement.clientHeight;
+        svgClone.setAttribute('width', width);
+        svgClone.setAttribute('height', height);
+        
+        // Create a canvas for PDF rendering
+        const canvas = document.createElement('canvas');
+        canvas.width = width * quality * 2; // Higher resolution
+        canvas.height = height * quality * 2;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(quality * 2, quality * 2); // Scale for higher quality
+        
+        // Set background color based on theme
+        ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        
+        // Convert SVG to a data URL
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const svg64 = btoa(unescape(encodeURIComponent(svgData)));
+        const img = new Image();
+        
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0);
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                
+                // Create PDF with appropriate orientation
+                const pdf = new jsPDF({
+                    orientation: width > height ? 'landscape' : 'portrait',
+                    unit: 'mm'
+                });
+                
+                // Calculate dimensions to fit the content in the PDF
+                const imgData = canvas.toDataURL('image/png');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (height / width) * pdfWidth;
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(`${filename}.pdf`);
+            } catch (error) {
+                console.error('Error creating PDF:', error);
+                alert('Error creating PDF: ' + error.message);
+            }
+        };
+        
+        img.src = `data:image/svg+xml;base64,${svg64}`;
+    };
+</script>
+{% else %}
 <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
     
@@ -175,6 +342,7 @@
         img.src = `data:image/svg+xml;base64,${svg64}`;
     };
 </script>
+{% endif %}
 {% endblock %}
 
 {% block diagram %}

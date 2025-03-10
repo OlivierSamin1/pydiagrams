@@ -6,8 +6,17 @@
     <title>{{ title }}</title>
     
     <!-- Theme system -->
+    {% if inline_resources %}
+    <style>
+        {{ inline_css }}
+    </style>
+    <script>
+        {{ inline_js }}
+    </script>
+    {% else %}
     <link rel="stylesheet" href="{{ static_url }}/css/themes.css">
     <script src="{{ static_url }}/js/themes.js"></script>
+    {% endif %}
     
     <!-- Custom styles specific to diagram type -->
     {% block styles %}{% endblock %}

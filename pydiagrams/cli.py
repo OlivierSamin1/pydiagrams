@@ -64,6 +64,12 @@ def main():
         help="Use dark mode for HTML output"
     )
     
+    parser.add_argument(
+        "--inline-resources",
+        action="store_true",
+        help="Inline CSS and JS resources in HTML (avoids CORS issues when viewing locally)"
+    )
+    
     args = parser.parse_args()
     
     # Check if the input file exists
@@ -89,6 +95,7 @@ def main():
         print(f"Quality: {args.quality}")
         if args.format == "html":
             print(f"Dark mode: {'enabled' if args.dark_mode else 'disabled'}")
+            print(f"Inline resources: {'enabled' if args.inline_resources else 'disabled'}")
     
     try:
         # Generate the diagram
@@ -96,7 +103,8 @@ def main():
             input_file,
             output_path,
             args.format,
-            args.dark_mode
+            args.dark_mode,
+            args.inline_resources
         )
         
         if args.verbose:
@@ -110,8 +118,8 @@ def main():
             if sys.platform == 'darwin':  # macOS
                 os.system(f'open "{output_file}"')
             elif sys.platform == 'win32':  # Windows
-                os.system(f'start "" "{output_file}"')
-            else:  # Linux and others
+                os.startfile(output_file)
+            else:  # Linux
                 os.system(f'xdg-open "{output_file}"')
     except Exception as e:
         print(f"Error generating diagram: {e}")

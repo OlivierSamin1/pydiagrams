@@ -19,7 +19,8 @@ class HTMLRenderer:
     # Default PlantUML server URL
     PLANTUML_SERVER = "http://www.plantuml.com/plantuml"
     
-    def __init__(self, width: int = 800, height: int = 600, interactive: bool = True, dark_mode: bool = False):
+    def __init__(self, width: int = 800, height: int = 600, interactive: bool = True, 
+                 dark_mode: bool = False, inline_resources: bool = False):
         """
         Initialize the HTML renderer.
         
@@ -28,11 +29,13 @@ class HTMLRenderer:
             height: Canvas height
             interactive: Whether to enable interactive features
             dark_mode: Whether to use dark mode
+            inline_resources: Whether to inline CSS and JS resources (avoids CORS issues)
         """
         self.width = width
         self.height = height
         self.interactive = interactive
         self.dark_mode = dark_mode
+        self.inline_resources = inline_resources
         
         # Set up Jinja2 environment
         templates_dir = Path(__file__).parent / 'templates'
@@ -60,21 +63,24 @@ class HTMLRenderer:
         # Get diagram type and content
         diagram_type = diagram_data.get('type', 'unknown')
         
-        # Create a directory for static files
+        # Create a directory for static files if not inlining resources
         output_path_obj = Path(output_path)
-        static_output_dir = output_path_obj.parent / f"{output_path_obj.stem}_files"
-        if not static_output_dir.exists():
-            static_output_dir.mkdir(exist_ok=True)
-            
-            # Copy CSS files
-            css_dir = static_output_dir / 'css'
-            css_dir.mkdir(exist_ok=True)
-            shutil.copy(self.static_dir / 'css' / 'themes.css', css_dir)
-            
-            # Copy JS files
-            js_dir = static_output_dir / 'js'
-            js_dir.mkdir(exist_ok=True)
-            shutil.copy(self.static_dir / 'js' / 'themes.js', js_dir)
+        static_url = f"{output_path_obj.stem}_files"
+        
+        if not self.inline_resources:
+            static_output_dir = output_path_obj.parent / static_url
+            if not static_output_dir.exists():
+                static_output_dir.mkdir(exist_ok=True)
+                
+                # Copy CSS files
+                css_dir = static_output_dir / 'css'
+                css_dir.mkdir(exist_ok=True)
+                shutil.copy(self.static_dir / 'css' / 'themes.css', css_dir)
+                
+                # Copy JS files
+                js_dir = static_output_dir / 'js'
+                js_dir.mkdir(exist_ok=True)
+                shutil.copy(self.static_dir / 'js' / 'themes.js', js_dir)
         
         # Prepare context for template
         context = {
@@ -83,8 +89,23 @@ class HTMLRenderer:
             'height': self.height,
             'interactive': self.interactive,
             'dark_mode': self.dark_mode,
-            'static_url': f"{output_path_obj.stem}_files"
+            'inline_resources': self.inline_resources,
+            'static_url': static_url
         }
+        
+        # If inlining resources, add the CSS and JS content to the context
+        if self.inline_resources:
+            css_file = self.static_dir / 'css' / 'themes.css'
+            js_file = self.static_dir / 'js' / 'themes.js'
+            
+            with open(css_file, 'r', encoding='utf-8') as f:
+                context['inline_css'] = f.read()
+                
+            with open(js_file, 'r', encoding='utf-8') as f:
+                context['inline_js'] = f.read()
+                
+            # Set Mermaid to use UMD/IIFE format instead of ESM for better compatibility
+            context['use_mermaid_umd'] = True
         
         # Choose the appropriate template based on diagram type
         if diagram_type == 'mermaid':

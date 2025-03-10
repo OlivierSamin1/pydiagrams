@@ -20,6 +20,37 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from pydiagrams import create_diagram_from_file
 
 
+def open_browser(file_path):
+    """Open a file in a browser with appropriate flags."""
+    abs_path = os.path.abspath(file_path)
+    print(f"Opening {abs_path} in browser...")
+    
+    # Try different executable names for Brave
+    brave_commands = ["brave", "brave-browser", "brave-browser-stable"]
+    opened = False
+    
+    for cmd in brave_commands:
+        try:
+            subprocess.run([cmd, f"file://{abs_path}"])
+            opened = True
+            break
+        except FileNotFoundError:
+            continue
+    
+    if not opened:
+        # As a fallback, try the default browser
+        if sys.platform == "linux":
+            subprocess.run(["xdg-open", f"file://{abs_path}"])
+        elif sys.platform == "darwin":
+            subprocess.run(["open", f"file://{abs_path}"])
+        elif sys.platform == "win32":
+            os.startfile(abs_path)
+        else:
+            print("Could not determine how to open browser on this platform.")
+    
+    return abs_path
+
+
 def main():
     """Run the comprehensive example."""
     # Define paths to the example diagram files
@@ -52,40 +83,42 @@ def main():
     print("\nPart 2: Interactive HTML")
     print("----------------------")
     
-    # Generate HTML with light mode
+    # Generate HTML with light mode and inline resources
     mermaid_html = output_dir / "mermaid_interactive.html"
-    create_diagram_from_file(mermaid_file, mermaid_html, output_format="html")
-    print(f"Generated interactive HTML from Mermaid: {mermaid_html}")
+    create_diagram_from_file(
+        mermaid_file, 
+        mermaid_html, 
+        output_format="html",
+        inline_resources=True
+    )
+    print(f"Generated interactive HTML from Mermaid with inline resources: {mermaid_html}")
     
-    # Generate HTML with dark mode
+    # Generate HTML with dark mode and inline resources
     plantuml_html = output_dir / "plantuml_interactive_dark.html"
     create_diagram_from_file(
         plantuml_file, 
         plantuml_html, 
         output_format="html",
-        dark_mode=True
+        dark_mode=True,
+        inline_resources=True
     )
-    print(f"Generated interactive HTML from PlantUML with dark mode: {plantuml_html}")
+    print(f"Generated interactive HTML from PlantUML with dark mode and inline resources: {plantuml_html}")
     
     # Ask to open the interactive examples in your browser? (y/n)
-    choice = input("Do you want to open the interactive examples in Brave browser? (y/n): ").strip().lower()
+    choice = input("Do you want to open the interactive examples in a browser? (y/n): ").strip().lower()
     
     if choice in ('y', 'yes'):
-        print("Opening examples in Brave browser...")
+        print("Opening examples in browser...")
         
         try:
-            # Use absolute paths for the files
-            mermaid_html_abs = os.path.abspath(mermaid_html)
-            plantuml_html_abs = os.path.abspath(plantuml_html)
-            
-            # Open with Brave using command-line arguments to allow file access
-            subprocess.run(["brave-browser", "--allow-file-access-from-files", f"file://{mermaid_html_abs}"])
+            # Open the files in browser
+            open_browser(mermaid_html)
             
             # Wait a moment before opening the next file
             import time
             time.sleep(1)
             
-            subprocess.run(["brave-browser", "--allow-file-access-from-files", f"file://{plantuml_html_abs}"])
+            open_browser(plantuml_html)
             
             print("\nInteractive Features:")
             print("1. Zoom and Pan: Use the zoom controls or mouse wheel to zoom, click and drag to pan")
@@ -93,13 +126,13 @@ def main():
             print("3. Export: Click the Export button to save as SVG, PNG, or PDF")
             
             print("\nCommand-line Equivalent:")
-            print(f"pydiagrams {mermaid_file} -o {mermaid_html} -f html --open")
-            print(f"pydiagrams {plantuml_file} -o {plantuml_html} -f html --dark-mode --open")
+            print(f"pydiagrams {mermaid_file} -o {mermaid_html} -f html --inline-resources --open")
+            print(f"pydiagrams {plantuml_file} -o {plantuml_html} -f html --dark-mode --inline-resources --open")
         except Exception as e:
             print(f"Error opening browser: {e}")
-            print("You can manually open the files in Brave with the --allow-file-access-from-files flag:")
-            print(f"brave-browser --allow-file-access-from-files file://{mermaid_html_abs}")
-            print(f"brave-browser --allow-file-access-from-files file://{plantuml_html_abs}")
+            print("You can manually open the files:")
+            print(f"  file://{os.path.abspath(mermaid_html)}")
+            print(f"  file://{os.path.abspath(plantuml_html)}")
 
 
 if __name__ == "__main__":
