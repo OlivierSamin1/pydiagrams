@@ -6,5 +6,5 @@ This module provides implementations for entity-related diagram types:
 - Data Flow Diagram (DFD)
 """
 
-from pydiagrams.diagrams.entity.erd import EntityRelationshipDiagram
-from pydiagrams.diagrams.entity.dfd import DataFlowDiagram 
+from pydiagrams.diagrams.entity.erd import EntityRelationshipDiagram, Entity, Attribute, EntityRelationship, AttributeType, RelationshipType, Cardinality
+from pydiagrams.diagrams.entity.dfd import DataFlowDiagram, Process, DataStore, ExternalEntity, TrustBoundary, DataFlow, ElementType, FlowType 
