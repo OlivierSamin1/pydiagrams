@@ -83,7 +83,7 @@
     }
     
     // Export functionality
-    window.exportDiagramSVG = function() {
+    window.exportDiagramSVG = function(filename, quality) {
         // For PlantUML, just download the current SVG
         const plantumlImage = document.getElementById('plantuml-image');
         
@@ -97,7 +97,7 @@
                     
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = '{{ title }}.svg';
+                    a.download = `${filename}.svg`;
                     document.body.appendChild(a);
                     a.click();
                     
@@ -112,16 +112,36 @@
                     alert('Error downloading SVG: ' + error.message);
                 });
         } else {
-            // Convert the image to SVG first (simplified)
-            alert('This image is not an SVG. Attempting to convert...');
-            
+            // Convert the image to SVG first
             // Replace the URL to get SVG instead
-            let url = plantumlImage.src.replace('/png/', '/svg/');
-            window.open(url, '_blank');
+            let svgUrl = plantumlImage.src.replace('/png/', '/svg/');
+            
+            fetch(svgUrl)
+                .then(response => response.text())
+                .then(svgContent => {
+                    const blob = new Blob([svgContent], {type: 'image/svg+xml'});
+                    const url = URL.createObjectURL(blob);
+                    
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${filename}.svg`;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    // Clean up
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
+                })
+                .catch(error => {
+                    console.error('Error downloading SVG:', error);
+                    alert('Error downloading SVG: ' + error.message);
+                });
         }
     };
     
-    window.exportDiagramPNG = function() {
+    window.exportDiagramPNG = function(filename, quality) {
         const container = document.querySelector('.plantuml-container');
         const sourceDisplay = document.getElementById('plantuml-source');
         const sourceToggle = document.getElementById('source-toggle');
@@ -131,28 +151,156 @@
         sourceDisplay.style.display = 'none';
         sourceToggle.style.display = 'none';
         
-        // Use html-to-image to capture the diagram
-        htmlToImage.toPng(container, { quality: 1.0, pixelRatio: 2 })
-            .then(function (dataUrl) {
-                const a = document.createElement('a');
-                a.href = dataUrl;
-                a.download = '{{ title }}.png';
-                document.body.appendChild(a);
-                a.click();
-                
-                // Clean up and restore
-                document.body.removeChild(a);
-                sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
-                sourceToggle.style.display = 'block';
+        // Get the PlantUML image
+        const plantumlImage = document.getElementById('plantuml-image');
+        
+        // If we're using the PlantUML server, we can get a high-quality PNG directly
+        if (plantumlImage.src.includes(PLANTUML_SERVER)) {
+            // Get the encoded data from the URL
+            let encodedData = plantumlImage.src.split('/').pop().split('?')[0];
+            
+            // Generate a PNG URL with the desired quality
+            let pngUrl = `${PLANTUML_SERVER}/png/${encodedData}`;
+            
+            // Add scale parameter for higher quality if needed
+            if (quality > 1) {
+                pngUrl += `?scale=${Math.round(quality * 2)}`;
+            }
+            
+            // Download the PNG
+            fetch(pngUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${filename}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    // Clean up and restore
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
+                    sourceToggle.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error downloading PNG:', error);
+                    alert('Error downloading PNG: ' + error.message);
+                    
+                    // Restore display state
+                    sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
+                    sourceToggle.style.display = 'block';
+                });
+        } else {
+            // Use html-to-image as a fallback
+            htmlToImage.toPng(container, { 
+                quality: 1.0, 
+                pixelRatio: quality * 2,
+                backgroundColor: document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#ffffff'
             })
-            .catch(function (error) {
-                console.error('Error generating PNG:', error);
-                alert('Error generating PNG: ' + error.message);
+                .then(function (dataUrl) {
+                    const a = document.createElement('a');
+                    a.href = dataUrl;
+                    a.download = `${filename}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    // Clean up and restore
+                    document.body.removeChild(a);
+                    sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
+                    sourceToggle.style.display = 'block';
+                })
+                .catch(function (error) {
+                    console.error('Error generating PNG:', error);
+                    alert('Error generating PNG: ' + error.message);
+                    
+                    // Restore display state
+                    sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
+                    sourceToggle.style.display = 'block';
+                });
+        }
+    };
+    
+    window.exportDiagramPDF = function(filename, quality) {
+        const container = document.querySelector('.plantuml-container');
+        const sourceDisplay = document.getElementById('plantuml-source');
+        const sourceToggle = document.getElementById('source-toggle');
+        
+        // Temporarily hide source code if shown
+        const wasSourceVisible = sourceDisplay.style.display === 'block';
+        sourceDisplay.style.display = 'none';
+        sourceToggle.style.display = 'none';
+        
+        try {
+            const { jsPDF } = window.jspdf;
+            const plantumlImage = document.getElementById('plantuml-image');
+            
+            // Create a canvas to draw the image
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Create an image to load the PlantUML diagram
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            
+            img.onload = function() {
+                // Set canvas size to match the image
+                canvas.width = img.width * quality;
+                canvas.height = img.height * quality;
+                
+                // Fill with background color
+                ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw the image
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Create PDF with appropriate orientation
+                const pdf = new jsPDF({
+                    orientation: img.width > img.height ? 'landscape' : 'portrait',
+                    unit: 'mm'
+                });
+                
+                // Calculate dimensions to fit the content in the PDF
+                const imgData = canvas.toDataURL('image/png');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (img.height / img.width) * pdfWidth;
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(`${filename}.pdf`);
                 
                 // Restore display state
                 sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
                 sourceToggle.style.display = 'block';
-            });
+            };
+            
+            // If we're using the PlantUML server, we can get a high-quality PNG directly
+            if (plantumlImage.src.includes(PLANTUML_SERVER)) {
+                // Get the encoded data from the URL
+                let encodedData = plantumlImage.src.split('/').pop().split('?')[0];
+                
+                // Generate a PNG URL with the desired quality
+                let pngUrl = `${PLANTUML_SERVER}/png/${encodedData}`;
+                
+                // Add scale parameter for higher quality if needed
+                if (quality > 1) {
+                    pngUrl += `?scale=${Math.round(quality * 2)}`;
+                }
+                
+                img.src = pngUrl;
+            } else {
+                img.src = plantumlImage.src;
+            }
+        } catch (error) {
+            console.error('Error creating PDF:', error);
+            alert('Error creating PDF: ' + error.message);
+            
+            // Restore display state
+            sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
+            sourceToggle.style.display = 'block';
+        }
     };
 </script>
 {% endblock %} 

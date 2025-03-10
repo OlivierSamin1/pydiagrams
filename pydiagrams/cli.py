@@ -34,9 +34,16 @@ def main():
     
     parser.add_argument(
         "-f", "--format",
-        choices=["svg", "png", "html"],
+        choices=["svg", "png", "html", "pdf"],
         default="svg",
         help="Output format (default: svg)"
+    )
+    
+    parser.add_argument(
+        "-q", "--quality",
+        type=float,
+        default=2.0,
+        help="Quality factor for export (1.0-3.0, default: 2.0)"
     )
     
     parser.add_argument(
@@ -49,6 +56,13 @@ def main():
         "--open",
         action="store_true",
         help="Open the resulting file after generation (particularly useful for HTML)"
+    )
+    
+    parser.add_argument(
+        "--theme",
+        choices=["light", "dark"],
+        default="light",
+        help="Theme for HTML output (default: light)"
     )
     
     args = parser.parse_args()
@@ -73,6 +87,9 @@ def main():
         diagram_type = detect_diagram_file_type(input_file)
         print(f"Generating {args.format.upper()} diagram from {diagram_type.capitalize()} file: {input_file}")
         print(f"Output file: {output_path}")
+        print(f"Quality: {args.quality}")
+        if args.format == "html":
+            print(f"Theme: {args.theme}")
     
     try:
         # Generate the diagram

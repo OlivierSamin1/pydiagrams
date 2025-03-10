@@ -83,6 +83,99 @@
             background-color: #5a9840;
         }
 
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: 5px;
+            min-width: 300px;
+            max-width: 500px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-title {
+            margin-top: 0;
+            color: var(--text-color);
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .export-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .export-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .export-inputs {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .export-inputs input {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            flex: 1;
+        }
+
+        /* Progress indicator */
+        #progress-indicator {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            flex-direction: column;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid white;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* Dark mode */
         body.dark-mode {
             --bg-color: #1e1e1e;
@@ -113,11 +206,20 @@
                 padding: 6px 10px;
                 font-size: 12px;
             }
+
+            .modal-content {
+                max-width: 90%;
+                padding: 15px;
+            }
         }
     </style>
     
     <!-- Custom styles specific to diagram type -->
     {% block styles %}{% endblock %}
+    
+    <!-- PDF Export Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- Base scripts common to all diagrams -->
     <script>
@@ -189,27 +291,145 @@
                 container.style.cursor = 'default';
             });
             
-            // Export handlers
-            document.getElementById('export-svg').addEventListener('click', exportSVG);
-            document.getElementById('export-png').addEventListener('click', exportPNG);
+            // Export Modal
+            const exportButton = document.getElementById('export-button');
+            const exportModal = document.getElementById('export-modal');
+            const closeModal = document.getElementById('close-modal');
             
-            function exportSVG() {
-                // This will be implemented with diagram-specific logic
+            exportButton.addEventListener('click', function() {
+                exportModal.style.display = 'flex';
+            });
+            
+            closeModal.addEventListener('click', function() {
+                exportModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            exportModal.addEventListener('click', function(e) {
+                if (e.target === exportModal) {
+                    exportModal.style.display = 'none';
+                }
+            });
+            
+            // Export options
+            document.getElementById('export-svg').addEventListener('click', function() {
+                exportModal.style.display = 'none';
+                const filename = document.getElementById('export-filename').value || '{{ title }}';
+                const quality = document.getElementById('export-quality').value || 1;
+                exportSVG(filename, parseFloat(quality));
+            });
+            
+            document.getElementById('export-png').addEventListener('click', function() {
+                exportModal.style.display = 'none';
+                const filename = document.getElementById('export-filename').value || '{{ title }}';
+                const quality = document.getElementById('export-quality').value || 1;
+                exportPNG(filename, parseFloat(quality));
+            });
+            
+            document.getElementById('export-pdf').addEventListener('click', function() {
+                exportModal.style.display = 'none';
+                const filename = document.getElementById('export-filename').value || '{{ title }}';
+                const quality = document.getElementById('export-quality').value || 1;
+                exportPDF(filename, parseFloat(quality));
+            });
+            
+            // Progress indicator
+            function showProgress(message) {
+                const progress = document.getElementById('progress-indicator');
+                const messageElem = document.getElementById('progress-message');
+                messageElem.textContent = message;
+                progress.style.display = 'flex';
+            }
+            
+            function hideProgress() {
+                const progress = document.getElementById('progress-indicator');
+                progress.style.display = 'none';
+            }
+            
+            // Export functions
+            function exportSVG(filename, quality) {
+                showProgress("Generating SVG...");
+                
                 if (typeof window.exportDiagramSVG === 'function') {
-                    window.exportDiagramSVG();
+                    try {
+                        window.exportDiagramSVG(filename, quality);
+                    } catch (error) {
+                        console.error('Error exporting SVG:', error);
+                        alert('Error exporting SVG: ' + error.message);
+                    } finally {
+                        hideProgress();
+                    }
                 } else {
+                    hideProgress();
                     alert('SVG export is not available for this diagram type.');
                 }
             }
             
-            function exportPNG() {
-                // This will be implemented with diagram-specific logic
+            function exportPNG(filename, quality) {
+                showProgress("Generating PNG...");
+                
                 if (typeof window.exportDiagramPNG === 'function') {
-                    window.exportDiagramPNG();
+                    try {
+                        window.exportDiagramPNG(filename, quality);
+                    } catch (error) {
+                        console.error('Error exporting PNG:', error);
+                        alert('Error exporting PNG: ' + error.message);
+                    } finally {
+                        hideProgress();
+                    }
                 } else {
+                    hideProgress();
                     alert('PNG export is not available for this diagram type.');
                 }
             }
+            
+            function exportPDF(filename, quality) {
+                showProgress("Generating PDF...");
+                
+                if (typeof window.exportDiagramPDF === 'function') {
+                    try {
+                        window.exportDiagramPDF(filename, quality);
+                    } catch (error) {
+                        console.error('Error exporting PDF:', error);
+                        alert('Error exporting PDF: ' + error.message);
+                    } finally {
+                        hideProgress();
+                    }
+                } else {
+                    // Default PDF export implementation
+                    try {
+                        const { jsPDF } = window.jspdf;
+                        const diagramElement = document.getElementById('diagram');
+                        
+                        html2canvas(diagramElement, { 
+                            scale: quality * 2,  // Higher quality
+                            backgroundColor: document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#ffffff'
+                        }).then(canvas => {
+                            const imgData = canvas.toDataURL('image/png');
+                            const pdf = new jsPDF({
+                                orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
+                                unit: 'mm'
+                            });
+                            
+                            // Calculate dimensions to fit the content in the PDF
+                            const imgWidth = pdf.internal.pageSize.getWidth();
+                            const imgHeight = canvas.height * imgWidth / canvas.width;
+                            
+                            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                            pdf.save(`${filename}.pdf`);
+                            hideProgress();
+                        });
+                    } catch (error) {
+                        console.error('Error creating PDF:', error);
+                        alert('Error creating PDF: ' + error.message);
+                        hideProgress();
+                    }
+                }
+            }
+            
+            // Export the functions to global scope
+            window.showProgress = showProgress;
+            window.hideProgress = hideProgress;
         });
     </script>
     
@@ -232,9 +452,42 @@
             <button id="reset-zoom" title="Reset Zoom">Reset</button>
         </div>
         <div class="control-group">
-            <button id="export-svg" class="secondary" title="Export as SVG">SVG</button>
-            <button id="export-png" class="secondary" title="Export as PNG">PNG</button>
+            <button id="export-button" class="secondary" title="Export Diagram">Export</button>
         </div>
+    </div>
+    
+    <!-- Export Modal -->
+    <div id="export-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal" class="modal-close">&times;</span>
+            <h3 class="modal-title">Export Diagram</h3>
+            
+            <div class="export-inputs">
+                <input type="text" id="export-filename" placeholder="Filename (without extension)" value="{{ title }}">
+                <input type="number" id="export-quality" placeholder="Quality (1-3)" value="2" min="1" max="3" step="0.5">
+            </div>
+            
+            <div class="export-options">
+                <div class="export-option">
+                    <span>SVG Vector Format</span>
+                    <button id="export-svg" class="secondary">Export SVG</button>
+                </div>
+                <div class="export-option">
+                    <span>PNG Image Format</span>
+                    <button id="export-png" class="secondary">Export PNG</button>
+                </div>
+                <div class="export-option">
+                    <span>PDF Document Format</span>
+                    <button id="export-pdf" class="secondary">Export PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Indicator -->
+    <div id="progress-indicator">
+        <div class="spinner"></div>
+        <div id="progress-message">Processing...</div>
     </div>
     
     <!-- Diagram-specific scripts -->
