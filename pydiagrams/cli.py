@@ -60,9 +60,15 @@ def main():
     
     parser.add_argument(
         "--theme",
-        choices=["light", "dark"],
-        default="light",
-        help="Theme for HTML output (default: light)"
+        choices=["default", "blue", "green", "purple", "high-contrast"],
+        default="default",
+        help="Theme for HTML output (default: default)"
+    )
+    
+    parser.add_argument(
+        "--dark-mode",
+        action="store_true",
+        help="Use dark mode for HTML output"
     )
     
     args = parser.parse_args()
@@ -90,13 +96,16 @@ def main():
         print(f"Quality: {args.quality}")
         if args.format == "html":
             print(f"Theme: {args.theme}")
+            print(f"Dark mode: {'enabled' if args.dark_mode else 'disabled'}")
     
     try:
         # Generate the diagram
         output_file = generate_diagram_from_file(
             input_file,
             output_path,
-            args.format
+            args.format,
+            args.theme,
+            args.dark_mode
         )
         
         if args.verbose:

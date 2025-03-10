@@ -7,6 +7,7 @@ This module provides functionality to render diagrams as interactive HTML.
 import os
 import base64
 import zlib
+import shutil
 from pathlib import Path
 from typing import Dict, Any, Optional
 from jinja2 import Environment, FileSystemLoader
@@ -18,7 +19,7 @@ class HTMLRenderer:
     # Default PlantUML server URL
     PLANTUML_SERVER = "http://www.plantuml.com/plantuml"
     
-    def __init__(self, width: int = 800, height: int = 600, interactive: bool = True):
+    def __init__(self, width: int = 800, height: int = 600, interactive: bool = True, theme: str = 'default', dark_mode: bool = False):
         """
         Initialize the HTML renderer.
         
@@ -26,14 +27,21 @@ class HTMLRenderer:
             width: Canvas width
             height: Canvas height
             interactive: Whether to enable interactive features
+            theme: Theme to use ('default', 'blue', 'green', 'purple', 'high-contrast')
+            dark_mode: Whether to use dark mode
         """
         self.width = width
         self.height = height
         self.interactive = interactive
+        self.theme = theme
+        self.dark_mode = dark_mode
         
         # Set up Jinja2 environment
         templates_dir = Path(__file__).parent / 'templates'
         self.env = Environment(loader=FileSystemLoader(templates_dir))
+        
+        # Static files directory
+        self.static_dir = Path(__file__).parent / 'static'
         
     def render(self, diagram_data: Dict[str, Any], output_path: str) -> str:
         """
@@ -54,12 +62,31 @@ class HTMLRenderer:
         # Get diagram type and content
         diagram_type = diagram_data.get('type', 'unknown')
         
+        # Create a directory for static files
+        output_path_obj = Path(output_path)
+        static_output_dir = output_path_obj.parent / f"{output_path_obj.stem}_files"
+        if not static_output_dir.exists():
+            static_output_dir.mkdir(exist_ok=True)
+            
+            # Copy CSS files
+            css_dir = static_output_dir / 'css'
+            css_dir.mkdir(exist_ok=True)
+            shutil.copy(self.static_dir / 'css' / 'themes.css', css_dir)
+            
+            # Copy JS files
+            js_dir = static_output_dir / 'js'
+            js_dir.mkdir(exist_ok=True)
+            shutil.copy(self.static_dir / 'js' / 'themes.js', js_dir)
+        
         # Prepare context for template
         context = {
             'title': diagram_data.get('title', f'{diagram_type.capitalize()} Diagram'),
             'width': self.width,
             'height': self.height,
             'interactive': self.interactive,
+            'theme': self.theme,
+            'dark_mode': self.dark_mode,
+            'static_url': f"{output_path_obj.stem}_files"
         }
         
         # Choose the appropriate template based on diagram type
