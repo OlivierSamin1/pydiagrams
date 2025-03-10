@@ -34,7 +34,7 @@ def main():
     
     parser.add_argument(
         "-f", "--format",
-        choices=["svg", "png"],
+        choices=["svg", "png", "html"],
         default="svg",
         help="Output format (default: svg)"
     )
@@ -43,6 +43,12 @@ def main():
         "-v", "--verbose",
         action="store_true",
         help="Enable verbose output"
+    )
+    
+    parser.add_argument(
+        "--open",
+        action="store_true",
+        help="Open the resulting file after generation (particularly useful for HTML)"
     )
     
     args = parser.parse_args()
@@ -78,6 +84,18 @@ def main():
         
         if args.verbose:
             print(f"Successfully generated diagram: {output_file}")
+            
+        # Open the file if requested
+        if args.open:
+            if args.verbose:
+                print(f"Opening {output_file}...")
+                
+            if sys.platform == 'darwin':  # macOS
+                os.system(f'open "{output_file}"')
+            elif sys.platform == 'win32':  # Windows
+                os.system(f'start "" "{output_file}"')
+            else:  # Linux and others
+                os.system(f'xdg-open "{output_file}"')
     except Exception as e:
         print(f"Error generating diagram: {e}")
         sys.exit(1)

@@ -58,7 +58,7 @@ def create_diagram_from_file(file_path, output_path=None, output_format='svg'):
     Args:
         file_path: Path to the diagram file
         output_path: Path where to save the generated diagram (optional)
-        output_format: Output format ('svg', 'png')
+        output_format: Output format ('svg', 'png', 'html')
 
     Returns:
         Path to the generated diagram file

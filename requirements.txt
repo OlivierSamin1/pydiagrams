@@ -5,6 +5,8 @@ reportlab>=3.6.0
 typing-extensions>=4.0.0
 # For PlantUML support (generating through the PlantUML server)
 requests>=2.25.0
+# For HTML templating
+jinja2>=3.0.0
 
 # Development dependencies
 pytest>=6.0.0

@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block styles %}
+<style>
+    .mermaid {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+</style>
+{% endblock %}
+
+{% block libraries %}
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: document.body.classList.contains('dark-mode') ? 'dark' : 'default',
+        securityLevel: 'loose',
+        fontFamily: '"Courier New", Courier, monospace',
+    });
+    
+    // Update theme when it changes
+    document.addEventListener('themeChanged', function(e) {
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: e.detail.darkMode ? 'dark' : 'default',
+        });
+        
+        // Re-render the diagram
+        const container = document.querySelector("#diagram");
+        container.innerHTML = `<div class="mermaid">${mermaidSource}</div>`;
+        mermaid.init(undefined, '.mermaid');
+    });
+    
+    // Store the original source for re-rendering
+    const mermaidSource = `{{ diagram_content | safe }}`;
+    
+    // Export functionality
+    window.exportDiagramSVG = function() {
+        const svgElement = document.querySelector('.mermaid svg');
+        if (!svgElement) {
+            alert('No SVG element found to export');
+            return;
+        }
+        
+        // Clone the SVG to avoid modifying the displayed one
+        const svgClone = svgElement.cloneNode(true);
+        
+        // Set explicit dimensions if needed
+        svgClone.setAttribute('width', svgElement.clientWidth);
+        svgClone.setAttribute('height', svgElement.clientHeight);
+        
+        // Create a blob and download link
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const blob = new Blob([svgData], {type: 'image/svg+xml'});
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '{{ title }}.svg';
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+    };
+    
+    window.exportDiagramPNG = function() {
+        const svgElement = document.querySelector('.mermaid svg');
+        if (!svgElement) {
+            alert('No SVG element found to export');
+            return;
+        }
+        
+        // Clone the SVG to avoid modifying the displayed one
+        const svgClone = svgElement.cloneNode(true);
+        
+        // Set explicit dimensions for better quality
+        const width = svgElement.clientWidth;
+        const height = svgElement.clientHeight;
+        svgClone.setAttribute('width', width);
+        svgClone.setAttribute('height', height);
+        
+        // Create a canvas for PNG rendering
+        const canvas = document.createElement('canvas');
+        canvas.width = width * 2; // Higher resolution
+        canvas.height = height * 2;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(2, 2); // Scale for higher quality
+        
+        // Convert SVG to a data URL
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const svg64 = btoa(unescape(encodeURIComponent(svgData)));
+        const img = new Image();
+        
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0);
+            
+            // Create a download link for the PNG
+            const a = document.createElement('a');
+            a.href = canvas.toDataURL('image/png');
+            a.download = '{{ title }}.png';
+            document.body.appendChild(a);
+            a.click();
+            
+            // Clean up
+            document.body.removeChild(a);
+        };
+        
+        img.src = `data:image/svg+xml;base64,${svg64}`;
+    };
+</script>
+{% endblock %}
+
+{% block diagram %}
+<div class="mermaid">
+{{ diagram_content | safe }}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Additional Mermaid-specific functionality can go here
+</script>
+{% endblock %} 

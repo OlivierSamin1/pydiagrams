@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        /* Base styles */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --primary-color: #4a86e8;
+            --secondary-color: #6aa84f;
+            --border-color: #cccccc;
+            --node-bg-color: #f3f3f3;
+            --node-border-color: #d9d9d9;
+            --relationship-color: #666666;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        #diagram-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        #diagram {
+            transition: transform 0.3s ease;
+            transform-origin: center center;
+        }
+        
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        button {
+            padding: 8px 12px;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #3a76d8;
+        }
+
+        button.secondary {
+            background-color: var(--secondary-color);
+        }
+
+        button.secondary:hover {
+            background-color: #5a9840;
+        }
+
+        /* Dark mode */
+        body.dark-mode {
+            --bg-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --primary-color: #3a76d8;
+            --secondary-color: #5a9840;
+            --border-color: #444444;
+            --node-bg-color: #2d2d2d;
+            --node-border-color: #3a3a3a;
+            --relationship-color: #999999;
+        }
+
+        #theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            #controls {
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            button {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+    
+    <!-- Custom styles specific to diagram type -->
+    {% block styles %}{% endblock %}
+    
+    <!-- Base scripts common to all diagrams -->
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            // Theme toggling
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                themeToggle.textContent = document.body.classList.contains('dark-mode') 
+                    ? '☀️ Light Mode' 
+                    : '🌙 Dark Mode';
+                
+                // Dispatch an event for diagram-specific renderers to handle
+                document.dispatchEvent(new CustomEvent('themeChanged', {
+                    detail: { darkMode: document.body.classList.contains('dark-mode') }
+                }));
+            });
+            
+            // Zoom controls
+            let scale = 1;
+            const diagram = document.getElementById('diagram');
+            
+            document.getElementById('zoom-in').addEventListener('click', function() {
+                scale *= 1.2;
+                updateScale();
+            });
+            
+            document.getElementById('zoom-out').addEventListener('click', function() {
+                scale /= 1.2;
+                updateScale();
+            });
+            
+            document.getElementById('reset-zoom').addEventListener('click', function() {
+                scale = 1;
+                updateScale();
+            });
+            
+            function updateScale() {
+                diagram.style.transform = `scale(${scale})`;
+            }
+            
+            // Pan controls
+            let isPanning = false;
+            let startX, startY;
+            let translateX = 0, translateY = 0;
+            
+            const container = document.getElementById('diagram-container');
+            
+            container.addEventListener('mousedown', function(e) {
+                // Only initiate pan if not clicking on a control
+                if (!e.target.closest('#controls') && !e.target.closest('#theme-toggle')) {
+                    isPanning = true;
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
+                    container.style.cursor = 'grabbing';
+                }
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (isPanning) {
+                    translateX = e.clientX - startX;
+                    translateY = e.clientY - startY;
+                    diagram.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                }
+            });
+            
+            document.addEventListener('mouseup', function() {
+                isPanning = false;
+                container.style.cursor = 'default';
+            });
+            
+            // Export handlers
+            document.getElementById('export-svg').addEventListener('click', exportSVG);
+            document.getElementById('export-png').addEventListener('click', exportPNG);
+            
+            function exportSVG() {
+                // This will be implemented with diagram-specific logic
+                if (typeof window.exportDiagramSVG === 'function') {
+                    window.exportDiagramSVG();
+                } else {
+                    alert('SVG export is not available for this diagram type.');
+                }
+            }
+            
+            function exportPNG() {
+                // This will be implemented with diagram-specific logic
+                if (typeof window.exportDiagramPNG === 'function') {
+                    window.exportDiagramPNG();
+                } else {
+                    alert('PNG export is not available for this diagram type.');
+                }
+            }
+        });
+    </script>
+    
+    <!-- Diagram-specific JavaScript libraries -->
+    {% block libraries %}{% endblock %}
+</head>
+<body>
+    <button id="theme-toggle">🌙 Dark Mode</button>
+
+    <div id="diagram-container">
+        <div id="diagram">
+            {% block diagram %}{% endblock %}
+        </div>
+    </div>
+    
+    <div id="controls">
+        <div class="control-group">
+            <button id="zoom-in" title="Zoom In">+</button>
+            <button id="zoom-out" title="Zoom Out">-</button>
+            <button id="reset-zoom" title="Reset Zoom">Reset</button>
+        </div>
+        <div class="control-group">
+            <button id="export-svg" class="secondary" title="Export as SVG">SVG</button>
+            <button id="export-png" class="secondary" title="Export as PNG">PNG</button>
+        </div>
+    </div>
+    
+    <!-- Diagram-specific scripts -->
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

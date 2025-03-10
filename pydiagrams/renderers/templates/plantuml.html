@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block styles %}
+<style>
+    .plantuml-container {
+        max-width: 100%;
+        max-height: 100%;
+        overflow: auto;
+    }
+    
+    .plantuml-image {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .plantuml-source {
+        display: none;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 14px;
+        padding: 15px;
+        background-color: var(--node-bg-color);
+        border: 1px solid var(--node-border-color);
+        border-radius: 5px;
+        white-space: pre-wrap;
+        margin-top: 20px;
+    }
+    
+    .source-toggle {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+    }
+</style>
+{% endblock %}
+
+{% block libraries %}
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+{% endblock %}
+
+{% block diagram %}
+<button id="source-toggle" class="source-toggle">Show Source</button>
+<div class="plantuml-container">
+    <img src="{{ diagram_image_url }}" alt="PlantUML Diagram" class="plantuml-image" id="plantuml-image">
+    <pre id="plantuml-source" class="plantuml-source">{{ diagram_content | escape }}</pre>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // PlantUML Server URL for image generation
+    const PLANTUML_SERVER = "{{ plantuml_server }}";
+    
+    // Toggle source display
+    const sourceToggle = document.getElementById('source-toggle');
+    const sourceDisplay = document.getElementById('plantuml-source');
+    
+    sourceToggle.addEventListener('click', function() {
+        const isVisible = sourceDisplay.style.display === 'block';
+        sourceDisplay.style.display = isVisible ? 'none' : 'block';
+        sourceToggle.textContent = isVisible ? 'Show Source' : 'Hide Source';
+    });
+    
+    // Theme changes for PlantUML
+    document.addEventListener('themeChanged', function(e) {
+        // Update the image URL to use the corresponding theme
+        updateDiagramWithTheme(e.detail.darkMode);
+    });
+    
+    function updateDiagramWithTheme(isDarkMode) {
+        const plantumlImage = document.getElementById('plantuml-image');
+        // Parse the current URL and update its parameters
+        let currentUrl = new URL(plantumlImage.src);
+        
+        // If the URL contains the PlantUML server, update the theme
+        if (currentUrl.origin.includes('plantuml')) {
+            let encodedData = currentUrl.pathname.split('/').pop();
+            // Generate a new URL with theme parameter
+            let theme = isDarkMode ? 'dark' : 'light';
+            let newUrl = `${PLANTUML_SERVER}/svg/${encodedData}?theme=${theme}`;
+            plantumlImage.src = newUrl;
+        }
+    }
+    
+    // Export functionality
+    window.exportDiagramSVG = function() {
+        // For PlantUML, just download the current SVG
+        const plantumlImage = document.getElementById('plantuml-image');
+        
+        if (plantumlImage.src.endsWith('.svg') || plantumlImage.src.includes('/svg/')) {
+            // It's already an SVG, just download it
+            fetch(plantumlImage.src)
+                .then(response => response.text())
+                .then(svgContent => {
+                    const blob = new Blob([svgContent], {type: 'image/svg+xml'});
+                    const url = URL.createObjectURL(blob);
+                    
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = '{{ title }}.svg';
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    // Clean up
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
+                })
+                .catch(error => {
+                    console.error('Error downloading SVG:', error);
+                    alert('Error downloading SVG: ' + error.message);
+                });
+        } else {
+            // Convert the image to SVG first (simplified)
+            alert('This image is not an SVG. Attempting to convert...');
+            
+            // Replace the URL to get SVG instead
+            let url = plantumlImage.src.replace('/png/', '/svg/');
+            window.open(url, '_blank');
+        }
+    };
+    
+    window.exportDiagramPNG = function() {
+        const container = document.querySelector('.plantuml-container');
+        const sourceDisplay = document.getElementById('plantuml-source');
+        const sourceToggle = document.getElementById('source-toggle');
+        
+        // Temporarily hide source code if shown
+        const wasSourceVisible = sourceDisplay.style.display === 'block';
+        sourceDisplay.style.display = 'none';
+        sourceToggle.style.display = 'none';
+        
+        // Use html-to-image to capture the diagram
+        htmlToImage.toPng(container, { quality: 1.0, pixelRatio: 2 })
+            .then(function (dataUrl) {
+                const a = document.createElement('a');
+                a.href = dataUrl;
+                a.download = '{{ title }}.png';
+                document.body.appendChild(a);
+                a.click();
+                
+                // Clean up and restore
+                document.body.removeChild(a);
+                sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
+                sourceToggle.style.display = 'block';
+            })
+            .catch(function (error) {
+                console.error('Error generating PNG:', error);
+                alert('Error generating PNG: ' + error.message);
+                
+                // Restore display state
+                sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
+                sourceToggle.style.display = 'block';
+            });
+    };
+</script>
+{% endblock %} 
