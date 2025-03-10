@@ -1,16 +1,29 @@
 """
 Architectural Diagrams module for PyDiagrams.
 
-This module provides implementations for architectural diagram types:
-- Deployment Diagram
-- Network Diagram
-- System Context Diagram
-- Container Diagram
-- Component Diagram
+This module provides implementations for various architectural diagram types:
+- Deployment Diagram: Shows how software artifacts are deployed on hardware nodes
+- Network Diagram: Shows network topology and connections
+- System Context Diagram: Shows system boundaries and external entities
+- Container Diagram: Shows high-level software architecture containers
 """
 
-from pydiagrams.diagrams.architectural.deployment_diagram import DeploymentDiagram
-from pydiagrams.diagrams.architectural.network_diagram import NetworkDiagram
-from pydiagrams.diagrams.architectural.context_diagram import SystemContextDiagram
-from pydiagrams.diagrams.architectural.container_diagram import ContainerDiagram
-from pydiagrams.diagrams.architectural.component_diagram import ComponentDiagram 
+from .deployment_diagram import (
+    DeploymentDiagram,
+    DeploymentNode,
+    DeploymentArtifact,
+    CommunicationPath,
+    Manifest,
+    NodeType,
+    CommunicationType
+)
+
+__all__ = [
+    'DeploymentDiagram',
+    'DeploymentNode',
+    'DeploymentArtifact',
+    'CommunicationPath',
+    'Manifest',
+    'NodeType',
+    'CommunicationType'
+] 

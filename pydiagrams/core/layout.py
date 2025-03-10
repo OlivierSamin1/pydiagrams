@@ -1,12 +1,12 @@
 """
 Layout module for PyDiagrams.
 
-This module provides layout algorithms for positioning diagram elements.
+This module provides layout algorithms for arranging diagram elements.
 """
 
 from abc import ABC, abstractmethod
 from typing import Dict, List, Tuple, Any, Optional
-from enum import Enum
+from enum import Enum, auto
 
 
 class LayoutDirection(Enum):
@@ -18,21 +18,23 @@ class LayoutDirection(Enum):
 
 
 class LayoutType(Enum):
-    """Enum for layout type."""
-    HIERARCHICAL = "hierarchical"
-    CIRCULAR = "circular"
-    FORCE_DIRECTED = "force_directed"
-    GRID = "grid"
+    """Types of layout algorithms available."""
+    NONE = auto()
+    HIERARCHICAL = auto()
+    CIRCULAR = auto()
+    FORCE_DIRECTED = auto()
+    GRID = auto()
     HORIZONTAL = "horizontal"
     VERTICAL = "vertical"
     AUTO = "auto"
 
 
 class Layout(ABC):
-    """Base class for layout algorithms."""
+    """Abstract base class for layout algorithms."""
     
-    def __init__(self):
-        """Initialize layout with default values."""
+    def __init__(self, layout_type: LayoutType):
+        """Initialize the layout with a specific type."""
+        self.layout_type = layout_type
         self.padding = 40
         self.element_spacing = 20
         self.rank_spacing = 60
@@ -106,15 +108,16 @@ class Layout(ABC):
         return self
         
     @abstractmethod
-    def apply(self, diagram_data: Dict) -> Dict:
+    def apply(self, elements: List[Any], relationships: List[Any]) -> Dict[str, Tuple[float, float]]:
         """
-        Apply layout to diagram data.
+        Apply the layout algorithm to the given elements and relationships.
         
         Args:
-            diagram_data: Dictionary with diagram elements and relationships
+            elements: List of diagram elements to layout
+            relationships: List of relationships between elements
             
         Returns:
-            Updated diagram data with positions
+            Dictionary mapping element IDs to their (x, y) positions
         """
         pass
         
@@ -141,13 +144,17 @@ class Layout(ABC):
 
 class HierarchicalLayout(Layout):
     """
-    Hierarchical layout algorithm for diagrams with parent-child relationships.
-    Organizes elements in levels/ranks.
+    Hierarchical layout implementation.
+    
+    This layout arranges elements in a hierarchical tree-like structure,
+    with elements placed in layers based on their relationships.
     """
     
     def __init__(self):
-        """Initialize hierarchical layout."""
-        super().__init__()
+        """Initialize the hierarchical layout."""
+        super().__init__(LayoutType.HIERARCHICAL)
+        self.layer_spacing = 100
+        self.node_spacing = 50
         self.align_rank = "center"  # center, left, right
         self.min_layer_distance = 50
         
@@ -177,24 +184,106 @@ class HierarchicalLayout(Layout):
         self.min_layer_distance = distance
         return self
         
-    def apply(self, diagram_data: Dict) -> Dict:
+    def apply(self, elements: List[Any], relationships: List[Any]) -> Dict[str, Tuple[float, float]]:
         """
-        Apply hierarchical layout to diagram data.
+        Apply hierarchical layout to the elements.
+        
+        This is a simple implementation that:
+        1. Assigns elements to layers based on relationship depth
+        2. Positions elements within each layer horizontally
+        3. Returns the calculated positions
         
         Args:
-            diagram_data: Dictionary with diagram elements and relationships
+            elements: List of diagram elements to layout
+            relationships: List of relationships between elements
             
         Returns:
-            Updated diagram data with positions
+            Dictionary mapping element IDs to their (x, y) positions
         """
-        # This is a placeholder for the actual layout algorithm
-        # In a real implementation, this would calculate positions
-        # based on the hierarchy implied by the relationships
+        # Create a map of element IDs to their objects for easy lookup
+        element_map = {element.id: element for element in elements}
         
-        # For now, we'll just return the input data with a note
-        diagram_data["layout_applied"] = True
-        diagram_data["layout_type"] = "hierarchical"
-        return diagram_data
+        # Create adjacency lists for the graph
+        outgoing = {element.id: set() for element in elements}
+        incoming = {element.id: set() for element in elements}
+        
+        # Build the graph from relationships
+        for rel in relationships:
+            outgoing[rel.source_id].add(rel.target_id)
+            incoming[rel.target_id].add(rel.source_id)
+        
+        # Assign layers to elements
+        layers = self._assign_layers(element_map, outgoing, incoming)
+        
+        # Calculate positions based on layers
+        positions = {}
+        max_elements = max(len(layer) for layer in layers)
+        total_width = max_elements * self.node_spacing
+        
+        for layer_idx, layer in enumerate(layers):
+            y = layer_idx * self.layer_spacing + 50
+            if len(layer) == 1:
+                # Center single elements
+                positions[layer[0]] = (total_width / 2, y)
+            else:
+                # Distribute elements evenly in the layer
+                spacing = total_width / (len(layer) + 1)
+                for idx, element_id in enumerate(layer, 1):
+                    x = idx * spacing
+                    positions[element_id] = (x, y)
+        
+        return positions
+    
+    def _assign_layers(
+        self,
+        element_map: Dict[str, Any],
+        outgoing: Dict[str, set],
+        incoming: Dict[str, set]
+    ) -> List[List[str]]:
+        """
+        Assign elements to layers based on their relationships.
+        
+        Args:
+            element_map: Dictionary mapping element IDs to their objects
+            outgoing: Dictionary mapping element IDs to their outgoing connections
+            incoming: Dictionary mapping element IDs to their incoming connections
+            
+        Returns:
+            List of layers, where each layer is a list of element IDs
+        """
+        # Find root elements (those with no incoming connections)
+        roots = [eid for eid, ins in incoming.items() if not ins]
+        if not roots:
+            # If no roots found, use any element as root
+            roots = [next(iter(element_map.keys()))]
+        
+        # Initialize layers with root elements
+        layers = [roots]
+        processed = set(roots)
+        
+        # Process remaining elements
+        while True:
+            next_layer = []
+            for parent_id in layers[-1]:
+                # Add all unprocessed children to the next layer
+                children = outgoing[parent_id] - processed
+                next_layer.extend(children)
+                processed.update(children)
+            
+            if not next_layer:
+                # If no more elements to process in the next layer
+                # Add any remaining unprocessed elements
+                remaining = set(element_map.keys()) - processed
+                if remaining:
+                    next_layer.extend(remaining)
+                    processed.update(remaining)
+                
+                if not remaining:
+                    break
+            
+            layers.append(sorted(next_layer))  # Sort for consistent layout
+        
+        return layers
 
 
 class CircularLayout(Layout):
@@ -204,7 +293,7 @@ class CircularLayout(Layout):
     
     def __init__(self):
         """Initialize circular layout."""
-        super().__init__()
+        super().__init__(LayoutType.CIRCULAR)
         self.radius = 200
         self.start_angle = 0
         self.end_angle = 360
@@ -251,23 +340,27 @@ class CircularLayout(Layout):
         self.equal_spacing = equal
         return self
         
-    def apply(self, diagram_data: Dict) -> Dict:
+    def apply(self, elements: List[Any], relationships: List[Any]) -> Dict[str, Tuple[float, float]]:
         """
-        Apply circular layout to diagram data.
+        Apply circular layout to the elements.
         
         Args:
-            diagram_data: Dictionary with diagram elements and relationships
+            elements: List of diagram elements to layout
+            relationships: List of relationships between elements
             
         Returns:
-            Updated diagram data with positions
+            Dictionary mapping element IDs to their (x, y) positions
         """
         # This is a placeholder for the actual layout algorithm
         # In a real implementation, this would calculate positions
         # in a circular arrangement
         
         # For now, we'll just return the input data with a note
-        diagram_data["layout_applied"] = True
-        diagram_data["layout_type"] = "circular"
+        diagram_data = {
+            "layout_applied": True,
+            "layout_type": "circular"
+        }
+        
         return diagram_data
 
 
@@ -278,7 +371,7 @@ class GridLayout(Layout):
     
     def __init__(self):
         """Initialize grid layout."""
-        super().__init__()
+        super().__init__(LayoutType.GRID)
         self.columns = 0  # 0 means auto-calculate
         self.rows = 0  # 0 means auto-calculate
         self.cell_width = 200
@@ -328,23 +421,27 @@ class GridLayout(Layout):
         self.align = align
         return self
         
-    def apply(self, diagram_data: Dict) -> Dict:
+    def apply(self, elements: List[Any], relationships: List[Any]) -> Dict[str, Tuple[float, float]]:
         """
-        Apply grid layout to diagram data.
+        Apply grid layout to the elements.
         
         Args:
-            diagram_data: Dictionary with diagram elements and relationships
+            elements: List of diagram elements to layout
+            relationships: List of relationships between elements
             
         Returns:
-            Updated diagram data with positions
+            Dictionary mapping element IDs to their (x, y) positions
         """
         # This is a placeholder for the actual layout algorithm
         # In a real implementation, this would calculate positions
         # in a grid arrangement
         
         # For now, we'll just return the input data with a note
-        diagram_data["layout_applied"] = True
-        diagram_data["layout_type"] = "grid"
+        diagram_data = {
+            "layout_applied": True,
+            "layout_type": "grid"
+        }
+        
         return diagram_data
 
 
@@ -356,7 +453,7 @@ class ForceDirectedLayout(Layout):
     
     def __init__(self):
         """Initialize force-directed layout."""
-        super().__init__()
+        super().__init__(LayoutType.FORCE_DIRECTED)
         self.spring_constant = 0.1
         self.repulsion_constant = 100.0
         self.damping = 0.9
@@ -414,21 +511,25 @@ class ForceDirectedLayout(Layout):
         self.iterations = iterations
         return self
         
-    def apply(self, diagram_data: Dict) -> Dict:
+    def apply(self, elements: List[Any], relationships: List[Any]) -> Dict[str, Tuple[float, float]]:
         """
-        Apply force-directed layout to diagram data.
+        Apply force-directed layout to the elements.
         
         Args:
-            diagram_data: Dictionary with diagram elements and relationships
+            elements: List of diagram elements to layout
+            relationships: List of relationships between elements
             
         Returns:
-            Updated diagram data with positions
+            Dictionary mapping element IDs to their (x, y) positions
         """
         # This is a placeholder for the actual layout algorithm
         # In a real implementation, this would calculate positions
         # using a force-directed algorithm
         
         # For now, we'll just return the input data with a note
-        diagram_data["layout_applied"] = True
-        diagram_data["layout_type"] = "force_directed"
+        diagram_data = {
+            "layout_applied": True,
+            "layout_type": "force_directed"
+        }
+        
         return diagram_data 

@@ -1,8 +1,23 @@
 """
-PyDiagrams - A comprehensive Python library for generating various types of diagrams.
+PyDiagrams - A Python library for creating various types of diagrams.
+
+This library provides tools for creating and rendering different types of diagrams:
+- UML Diagrams (Class, Sequence, Activity, etc.)
+- Architectural Diagrams (Deployment, Network, etc.)
+- And more...
 """
 
-__version__ = '0.1.0'
+from . import diagrams
+from . import renderers
+from . import core
+
+__version__ = "0.1.0"
+
+__all__ = [
+    'diagrams',
+    'renderers',
+    'core'
+]
 
 # Import core diagram classes for easier access
 from pydiagrams.diagrams.uml.class_diagram import ClassDiagram
