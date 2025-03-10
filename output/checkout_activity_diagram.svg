@@ -48,136 +48,136 @@
   </defs>
   <g id="diagram">
     <g id="swimlanes">
-      <g class="swimlane" id="swimlane-3324f4bc-9f30-4396-b689-2c34f74b3f5f">
+      <g class="swimlane" id="swimlane-a40a6e98-9a72-469f-9a58-36236ff3cd47">
         <rect class="swimlane" fill="#FFFFFF" fill-opacity="0.3" height="130" stroke="#000000" stroke-width="1" width="200" x="-40" y="-50"/>
         <text class="swimlane-label" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" x="60.0" y="-30">Customer</text>
       </g>
-      <g class="swimlane" id="swimlane-56ee816b-69c5-418d-9365-dc371d459e4e">
+      <g class="swimlane" id="swimlane-02621086-c16a-4eed-932a-ba8f7b666e54">
         <rect class="swimlane" fill="#FFFFFF" fill-opacity="0.3" height="150" stroke="#000000" stroke-width="1" width="200" x="-40" y="-50"/>
         <text class="swimlane-label" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" x="60.0" y="-30">System</text>
       </g>
-      <g class="swimlane" id="swimlane-3d7526ce-0ad5-4964-9415-045eea032c47">
+      <g class="swimlane" id="swimlane-9a02d3a5-12e6-4de9-bbb0-a3970173b71f">
         <rect class="swimlane" fill="#FFFFFF" fill-opacity="0.3" height="130" stroke="#000000" stroke-width="1" width="200" x="-40" y="-50"/>
         <text class="swimlane-label" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" x="60.0" y="-30">Payment Processor</text>
       </g>
     </g>
     <g id="edges">
-      <g class="edge" id="edge-0d03e344-29b7-4304-a0a4-29cc4ee2e1d7">
+      <g class="edge" id="edge-0921386c-e31e-4961-9dcb-9e4b2b042c7a">
         <path class="edge" d="M19.284766908852593,13.713906763541036 L0.0,5.999999999999993" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-64fd5392-d6c1-475f-ad96-6eefe76c28a4">
+      <g class="edge" id="edge-489396dd-bb30-46df-8a11-6cf726c30764">
         <path class="edge" d="M0.0,30.0 L0.0,30.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-ab2460e7-5b2e-4013-8c4d-8ac6939fb4a7">
+      <g class="edge" id="edge-427f0bbe-cf57-4bad-a3cc-5781ef590d37">
         <path class="edge" d="M0.0,14.999999999999986 L40.0,25.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-6120a12d-cab2-43e6-b43a-be7a0718d15f">
+      <g class="edge" id="edge-e99d7f61-081f-4209-8035-7eab4097bcb6">
         <path class="edge" d="M40.0,25.0 L0.0,14.999999999999986" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
         <text class="guard" font-family="Arial, Helvetica, sans-serif" font-size="12" font-style="italic" text-anchor="middle" x="23.638034375545" y="5.447862497820015">[yes]</text>
       </g>
-      <g class="edge" id="edge-fea76780-8b28-4e32-b635-c6032d1e5eb4">
+      <g class="edge" id="edge-49adad01-dcf2-4e46-97fd-3b0fa305f565">
         <path class="edge" d="M0.0,20.0 L0.0,20.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
         <text class="guard" font-family="Arial, Helvetica, sans-serif" font-size="12" font-style="italic" text-anchor="middle" x="0.0" y="20.0">[no]</text>
       </g>
-      <g class="edge" id="edge-6840b7a6-bc48-439f-be14-2a903a5248a4">
+      <g class="edge" id="edge-906cde5d-e5cf-48bc-86f4-5c9cb3204452">
         <path class="edge" d="M0.0,14.999999999999986 L40.0,25.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-a862b0a3-886e-4b97-a9b9-de43ae9742aa">
+      <g class="edge" id="edge-0463f19f-4315-43c6-bb6d-1960b0328418">
         <path class="edge" d="M40.0,25.0 L0.0,14.999999999999986" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-13406c41-aed1-44bb-82d0-a7fd26ac8157">
+      <g class="edge" id="edge-6be8bc16-b778-47b6-bd8f-2cda1e820856">
         <path class="edge" d="M0.0,30.0 L0.0,30.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-ae518346-da7b-4345-8f0c-d89182b18890">
+      <g class="edge" id="edge-c7d45cd1-65ba-47b8-91b7-f249b3f569c2">
         <path class="edge" d="M0.0,30.0 L0.0,30.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-8aba559c-f980-46d1-9397-38990da6b137">
+      <g class="edge" id="edge-b1d117f3-e66d-4101-abbb-f4a0be111219">
         <path class="edge" d="M0.0,40.90909090909091 L5.0,0.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-ae705592-df7b-474d-ad58-0ba724dec74b">
+      <g class="edge" id="edge-8730f653-f2fd-4c5d-b17a-bf0e247cdf64">
         <path class="edge" d="M5.0,0.0 L0.0,40.90909090909091" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-bada5e07-e75a-4efc-94c4-0bf32e2ef17d">
+      <g class="edge" id="edge-9aaa8cf9-c885-4370-b60e-4d6f8f5ee6a7">
         <path class="edge" d="M5.0,0.0 L0.0,40.90909090909091" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-a3d617f6-b2ee-47ad-a1e9-1f8c3f606e10">
+      <g class="edge" id="edge-0de77dfe-be7a-4ad6-9612-cfbe2e5b3d02">
         <path class="edge" d="M5.0,0.0 L0.0,40.90909090909091" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-798e4a86-599c-47e6-8394-c4017281493b">
+      <g class="edge" id="edge-1922e5e7-5be7-4fda-9791-2f0f8aa3463d">
         <path class="edge" d="M0.0,40.90909090909091 L5.0,0.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-e7644e95-1caa-4db2-b97c-1294edadc6b3">
+      <g class="edge" id="edge-522bd4f3-e109-4410-809b-6235062a0f43">
         <path class="edge" d="M0.0,40.90909090909091 L5.0,0.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-3360d4c6-ad48-496e-bd9d-fe3735899359">
+      <g class="edge" id="edge-ce106a78-1af0-4d57-8c5f-aeb3e59893b4">
         <path class="edge" d="M0.0,40.90909090909091 L5.0,0.0" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-29b38db3-11d8-4f84-8836-20a3fcadf7a5">
+      <g class="edge" id="edge-9afbd648-62b8-4065-bdfd-094a537ac919">
         <path class="edge" d="M5.0,0.0 L0.0,40.90909090909091" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="edge" id="edge-2468878d-572e-46c7-8547-d79e41776637">
+      <g class="edge" id="edge-9553b6ca-6129-4591-87a8-40fdc7c0db0f">
         <path class="edge" d="M0.0,9.999999999999993 L29.230249470757705,19.74341649025257" fill="none" marker-end="url(#arrow)" stroke="#000000" stroke-width="1"/>
       </g>
     </g>
     <g id="nodes">
-      <g class="activity-node" id="node-d2b8e7db-7703-4791-92c6-91876ae84084">
+      <g class="activity-node" id="node-4f6b39b1-2b82-4a8a-ac69-78d1e24dad01">
         <circle class="initial-node" cx="10.0" cy="10.0" fill="#000000" r="10.0"/>
       </g>
-      <g class="activity-node" id="node-fce1ae55-a3a5-475e-8c07-659c69094ccd">
+      <g class="activity-node" id="node-df997562-46ff-4371-b669-8eacfa13a685">
         <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
         <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Review Shopping Cart</text>
       </g>
-      <g class="activity-node" id="node-72869ed9-e752-4726-8b5f-8c246f2dce43">
+      <g class="activity-node" id="node-647d692b-c031-4d79-97ae-0870876026b4">
         <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
         <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Proceed to Checkout</text>
       </g>
-      <g class="activity-node" id="node-a5f4a9af-5fd8-4e16-8619-2191d328de31">
+      <g class="activity-node" id="node-c71f640a-eec0-4665-87d1-7b3a788e9f18">
         <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
         <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Enter Shipping Information</text>
       </g>
-      <g class="activity-node" id="node-9459bfa9-341e-4011-8d85-6f1bd57e8f3d">
+      <g class="activity-node" id="node-02968a94-ef0e-4c34-8563-acdc2c38cfc6">
         <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
         <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Select Payment Method</text>
       </g>
-      <g class="activity-node" id="node-c788b4be-4639-4949-90e1-bc3fa9f08587">
+      <g class="activity-node" id="node-c4c2178b-728c-4724-8b05-9b8e252ab503">
         <polygon class="decision-node" fill="#FFFFFF" points="20.0,0.0 40.0,20.0 20.0,40.0 0.0,20.0" stroke="#000000" stroke-width="1"/>
         <text class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="20.0" y="-10.0">Registered User?</text>
       </g>
-      <g class="activity-node" id="node-5e12bd83-1923-490a-81eb-915236ef7962">
+      <g class="activity-node" id="node-e3697988-b258-4fe2-9763-fbb198caec67">
         <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
         <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Load Saved Info</text>
       </g>
-      <g class="activity-node" id="node-8f8b201b-edee-40cd-a142-de3f010c7cf4">
+      <g class="activity-node" id="node-f826b54f-8630-4b07-95c5-5ffcacab08a4">
         <polygon class="merge-node" fill="#FFFFFF" points="20.0,0.0 40.0,20.0 20.0,40.0 0.0,20.0" stroke="#000000" stroke-width="1"/>
       </g>
-      <g class="activity-node" id="node-d2736e87-5de1-4a00-8ff2-1c61119a7898">
+      <g class="activity-node" id="node-02b7e445-fe90-4124-905f-8905f0d8ea6e">
         <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
         <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Calculate Total</text>
       </g>
-      <g class="activity-node" id="node-6409f094-febe-4281-9170-f26a0eab14ea">
+      <g class="activity-node" id="node-7b7f13a2-8505-44b8-864f-0920d73481c4">
         <rect class="fork-node" fill="#000000" height="80" width="10" x="0" y="0"/>
       </g>
-      <g class="activity-node" id="node-f9f643e9-3a4c-453a-b360-0777fbb75fd5">
+      <g class="activity-node" id="node-016a484f-5222-44ed-8c5b-b097be888196">
         <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
         <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Process Order</text>
       </g>
-      <g class="activity-node" id="node-b04c5741-7ea1-44f8-bdd9-513a852ee1d8">
+      <g class="activity-node" id="node-a8e20c3d-cb0d-4373-8efd-7041230a6134">
         <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
         <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Send Email Confirmation</text>
       </g>
-      <g class="activity-node" id="node-5008deba-0c99-457d-b98f-4610e69f5fcb">
+      <g class="activity-node" id="node-bb585b29-708e-4b69-bc86-157fe2124ca7">
         <rect class="join-node" fill="#000000" height="80" width="10" x="0" y="0"/>
       </g>
-      <g class="activity-node" id="node-9a809298-5785-4484-92fd-311b1776f26e">
+      <g class="activity-node" id="node-58eb10a5-1548-4e72-a777-3019c8cfe9c7">
         <rect class="action-node" fill="#FFFFFF" height="60" rx="8" ry="8" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
         <text alignment-baseline="middle" class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="30.0">Process Payment</text>
       </g>
-      <g class="activity-node" id="node-5717a400-08fa-42db-8fec-2c78ee2dbf5e">
+      <g class="activity-node" id="node-db53d460-1856-469f-b542-7a9926098d23">
         <rect class="object-node" fill="#FFFFFF" height="60" stroke="#000000" stroke-width="1" width="120" x="0" y="0"/>
         <text class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" x="60.0" y="20.0">Order</text>
         <text class="node-label" font-family="Arial, Helvetica, sans-serif" font-size="12" font-style="italic" text-anchor="middle" x="60.0" y="40.0">[Completed]</text>
       </g>
-      <g class="activity-node" id="node-eb810ef6-549e-4353-a90b-ca9c8382cb67">
+      <g class="activity-node" id="node-d55c4ff9-d016-41d0-ae99-e020d81edd97">
         <circle class="final-node" cx="15.0" cy="15.0" fill="#FFFFFF" r="15.0" stroke="#000000" stroke-width="1"/>
         <circle class="activity-final-inner" cx="15.0" cy="15.0" fill="#000000" r="10.0"/>
       </g>

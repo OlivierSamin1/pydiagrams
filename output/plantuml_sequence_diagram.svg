@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+  <text x="10" y="20" font-family="monospace">PlantUML Diagram:</text>
+  <foreignObject width="100%" height="100%" y="30">
+    <div xmlns="http://www.w3.org/1999/xhtml">
+      <pre style="font-family: monospace; white-space: pre-wrap;">
+@startuml
+title Payment Processing Sequence
+
+actor Customer
+participant "Web UI" as UI
+participant "Payment Service" as PS
+participant "Order Service" as OS
+database "Order Database" as DB
+participant "Email Service" as ES
+
+Customer -> UI: Place order
+UI -> PS: Process payment
+PS --> UI: Payment successful
+UI -> OS: Create order
+OS -> DB: Store order details
+DB --> OS: Order stored
+OS --> UI: Order created
+UI -> ES: Send confirmation email
+ES --> Customer: Confirmation email
+UI --> Customer: Order confirmation
+
+@enduml 
+      </pre>
+    </div>
+  </foreignObject>
+</svg>

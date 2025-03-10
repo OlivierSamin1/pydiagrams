@@ -7,3 +7,4 @@ alwaysApply: false
 # Your rule content
 - always ask and wait for validation before executing a command or execcuting a task
 - after a task is executed, always explain what has been done in this task
+- when a diagram is fully set, meaning the example is working and the test has passed, then commit and push the changes
