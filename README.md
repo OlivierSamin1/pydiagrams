@@ -88,6 +88,15 @@ create_diagram_from_file("my_diagram.mmd", "output.svg")
 
 # Generate a diagram from a PlantUML file
 create_diagram_from_file("my_diagram.puml", "output.png", output_format="png")
+
+# Generate an interactive HTML diagram with themes
+create_diagram_from_file(
+    "my_diagram.mmd", 
+    "output.html", 
+    output_format="html",
+    theme="blue",      # Options: default, blue, green, purple, high-contrast
+    dark_mode=True     # Enable dark mode
+)
 ```
 
 ### Using the Command Line
@@ -101,9 +110,25 @@ pydiagrams my_diagram.mmd -o output.svg
 # Generate PNG from a PlantUML file
 pydiagrams my_diagram.puml -o output.png -f png
 
+# Generate interactive HTML with themes
+pydiagrams my_diagram.mmd -o output.html -f html --theme blue --dark-mode
+
+# Open the generated file automatically
+pydiagrams my_diagram.mmd -o output.html -f html --open
+
 # Get help
 pydiagrams --help
 ```
+
+## Interactive HTML Features
+
+When generating HTML diagrams, PyDiagrams provides a rich interactive experience:
+
+- **Zoom and Pan**: Easily navigate large diagrams
+- **Multiple Themes**: Choose from several color schemes
+- **Dark Mode**: Toggle between light and dark modes
+- **Export Options**: Export to SVG, PNG, or PDF directly from the browser
+- **Responsive Design**: Works on desktop and mobile devices
 
 ## Documentation
 
