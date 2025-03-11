@@ -1,0 +1,12 @@
+graph TD
+    subgraph "Transaction Service"
+    TransController[Transaction Controller] --> TransValidator[Transaction Validator]
+    TransController --> TransProcessor[Transaction Processor]
+    TransProcessor --> FeeCalculator[Fee Calculator]
+    TransProcessor --> TransactionStore[Transaction Store]
+    TransProcessor --> NotificationClient[Notification Client]
+    TransactionStore --> Database[(Database)]
+    end
+    
+    API[API Gateway] --> TransController
+    NotificationClient --> NotificationService[Notification Service]

@@ -1,0 +1,52 @@
+graph TD
+    subgraph "E-commerce System"
+    
+    subgraph "Customer Use Cases"
+    UC1[Browse Products]
+    UC2[Search Products]
+    UC3[View Product Details]
+    UC4[Add to Cart]
+    UC5[Checkout]
+    UC6[Track Order]
+    UC7[Manage Account]
+    UC8[Write Review]
+    end
+    
+    subgraph "Admin Use Cases"
+    UC9[Manage Products]
+    UC10[Manage Orders]
+    UC11[Generate Reports]
+    UC12[Manage Users]
+    end
+    
+    subgraph "System Use Cases"
+    UC13[Process Payment]
+    UC14[Send Notifications]
+    UC15[Update Inventory]
+    UC16[Log Activities]
+    end
+    
+    end
+    
+    Customer((Customer)) --- UC1
+    Customer --- UC2
+    Customer --- UC3
+    Customer --- UC4
+    Customer --- UC5
+    Customer --- UC6
+    Customer --- UC7
+    Customer --- UC8
+    
+    Admin((Admin)) --- UC9
+    Admin --- UC10
+    Admin --- UC11
+    Admin --- UC12
+    
+    System((System)) --- UC13
+    System --- UC14
+    System --- UC15
+    System --- UC16
+    
+    UC5 -.- UC13
+    UC5 -.- UC14
+    UC5 -.- UC15

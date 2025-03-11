@@ -1,0 +1,73 @@
+classDiagram
+    class User {
+        -String id
+        -String name
+        -String email
+        -String password
+        +register()
+        +login()
+        +updateProfile()
+    }
+    
+    class Customer {
+        -String address
+        -String paymentMethod
+        +placeOrder()
+        +viewOrderHistory()
+        +addToCart()
+    }
+    
+    class Admin {
+        -String role
+        +manageProducts()
+        +viewReports()
+        +manageUsers()
+    }
+    
+    class Order {
+        -String id
+        -Date orderDate
+        -String status
+        -float total
+        +calculateTotal()
+        +updateStatus()
+        +cancel()
+    }
+    
+    class Product {
+        -String id
+        -String name
+        -String description
+        -float price
+        -int stockQuantity
+        +updateStock()
+        +updatePrice()
+    }
+    
+    class OrderItem {
+        -int quantity
+        -float unitPrice
+        +calculateSubtotal()
+    }
+    
+    class Cart {
+        -String id
+        +addItem()
+        +removeItem()
+        +updateQuantity()
+        +clear()
+    }
+    
+    class CartItem {
+        -int quantity
+        +updateQuantity()
+    }
+    
+    User <|-- Customer
+    User <|-- Admin
+    Customer "1" -- "0..*" Order : places
+    Order "1" *-- "1..*" OrderItem : contains
+    OrderItem "1" -- "1" Product : references
+    Customer "1" -- "0..1" Cart : has
+    Cart "1" *-- "0..*" CartItem : contains
+    CartItem "1" -- "1" Product : references

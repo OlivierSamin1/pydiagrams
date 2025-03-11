@@ -1,0 +1,33 @@
+stateDiagram-v2
+    [*] --> BrowsingProducts: User Visits Site
+    
+    BrowsingProducts --> ViewingProduct: Select Product
+    ViewingProduct --> BrowsingProducts: Continue Shopping
+    ViewingProduct --> CartFilling: Add to Cart
+    
+    CartFilling --> CartFilling: Add More Items
+    CartFilling --> CartFilling: Update Quantity
+    CartFilling --> CartFilling: Remove Item
+    CartFilling --> BrowsingProducts: Continue Shopping
+    CartFilling --> Checkout: Proceed to Checkout
+    
+    Checkout --> AddressFilling: Enter Shipping Info
+    AddressFilling --> PaymentInfo: Enter Payment
+    PaymentInfo --> OrderReview: Review Order
+    OrderReview --> ProcessingPayment: Confirm Order
+    
+    ProcessingPayment --> OrderPlaced: Payment Successful
+    ProcessingPayment --> PaymentFailed: Payment Failed
+    PaymentFailed --> PaymentInfo: Try Again
+    
+    OrderPlaced --> OrderProcessing: Begin Fulfillment
+    OrderProcessing --> OrderShipped: Ship Order
+    OrderShipped --> OrderDelivered: Deliver Order
+    OrderDelivered --> [*]
+    
+    state OrderProcessing {
+        [*] --> Verification
+        Verification --> Packing
+        Packing --> ReadyForShipment
+        ReadyForShipment --> [*]
+    }

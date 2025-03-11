@@ -1,0 +1,44 @@
+graph TD
+    subgraph "Application Structure"
+    App[App.js] --> Router[Router.js]
+    Router --> HomePage[HomePage.js]
+    Router --> ProductPage[ProductPage.js]
+    Router --> CartPage[CartPage.js]
+    Router --> CheckoutPage[CheckoutPage.js]
+    
+    HomePage --> FeaturedProducts[FeaturedProducts.js]
+    HomePage --> CategoryList[CategoryList.js]
+    
+    ProductPage --> ProductDetails[ProductDetails.js]
+    ProductPage --> RelatedProducts[RelatedProducts.js]
+    ProductDetails --> ProductGallery[ProductGallery.js]
+    ProductDetails --> ProductOptions[ProductOptions.js]
+    ProductDetails --> AddToCartButton[AddToCartButton.js]
+    
+    CartPage --> CartItems[CartItems.js]
+    CartPage --> CartSummary[CartSummary.js]
+    
+    CheckoutPage --> ShippingForm[ShippingForm.js]
+    CheckoutPage --> PaymentForm[PaymentForm.js]
+    CheckoutPage --> OrderSummary[OrderSummary.js]
+    end
+    
+    subgraph "State Management"
+    Store[Store.js] --> UserReducer[UserReducer.js]
+    Store --> ProductReducer[ProductReducer.js]
+    Store --> CartReducer[CartReducer.js]
+    Store --> OrderReducer[OrderReducer.js]
+    end
+    
+    subgraph "API Services"
+    ApiClient[ApiClient.js] --> UserService[UserService.js]
+    ApiClient --> ProductService[ProductService.js]
+    ApiClient --> CartService[CartService.js]
+    ApiClient --> OrderService[OrderService.js]
+    end
+    
+    App --> Store
+    ProductPage --> ProductService
+    CartPage --> CartService
+    CheckoutPage --> OrderService
+    HomePage --> ProductService

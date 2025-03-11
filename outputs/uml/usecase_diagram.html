@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>usecase_diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #ffffff;
+            color: #333333;
+        }
+        
+        .mermaid {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        button {
+            padding: 8px 16px;
+            background-color: #4a86e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        
+        button:hover {
+            background-color: #3a76d8;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'default',
+                securityLevel: 'loose',
+                fontFamily: '"Courier New", Courier, monospace'
+            });
+            
+            // Toggle dark mode
+            const darkModeButton = document.getElementById('dark-mode');
+            darkModeButton.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                
+                if (document.body.classList.contains('dark-mode')) {
+                    document.body.style.backgroundColor = '#1e1e1e';
+                    document.body.style.color = '#e0e0e0';
+                    mermaid.initialize({
+                        theme: 'dark'
+                    });
+                } else {
+                    document.body.style.backgroundColor = '#ffffff';
+                    document.body.style.color = '#333333';
+                    mermaid.initialize({
+                        theme: 'default'
+                    });
+                }
+                
+                // Re-render the diagram
+                const container = document.querySelector(".mermaid");
+                const source = container.textContent.trim();
+                container.innerHTML = source;
+                mermaid.init(undefined, '.mermaid');
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Usecase Diagram</h1>
+    <div class="container">
+        <div class="mermaid">
+graph TD
+    subgraph "E-commerce System"
+    
+    subgraph "Customer Use Cases"
+    UC1[Browse Products]
+    UC2[Search Products]
+    UC3[View Product Details]
+    UC4[Add to Cart]
+    UC5[Checkout]
+    UC6[Track Order]
+    UC7[Manage Account]
+    UC8[Write Review]
+    end
+    
+    subgraph "Admin Use Cases"
+    UC9[Manage Products]
+    UC10[Manage Orders]
+    UC11[Generate Reports]
+    UC12[Manage Users]
+    end
+    
+    subgraph "System Use Cases"
+    UC13[Process Payment]
+    UC14[Send Notifications]
+    UC15[Update Inventory]
+    UC16[Log Activities]
+    end
+    
+    end
+    
+    Customer((Customer)) --- UC1
+    Customer --- UC2
+    Customer --- UC3
+    Customer --- UC4
+    Customer --- UC5
+    Customer --- UC6
+    Customer --- UC7
+    Customer --- UC8
+    
+    Admin((Admin)) --- UC9
+    Admin --- UC10
+    Admin --- UC11
+    Admin --- UC12
+    
+    System((System)) --- UC13
+    System --- UC14
+    System --- UC15
+    System --- UC16
+    
+    UC5 -.- UC13
+    UC5 -.- UC14
+    UC5 -.- UC15
+        </div>
+        <div class="buttons">
+            <button id="dark-mode">Toggle Dark Mode</button>
+        </div>
+    </div>
+</body>
+</html>

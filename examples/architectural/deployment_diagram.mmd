@@ -1,0 +1,27 @@
+graph TB
+    subgraph "Production Environment"
+    subgraph "Region A"
+    LBA[Load Balancer A] --> AppA1[App Server A1]
+    LBA --> AppA2[App Server A2]
+    AppA1 --> CacheA[Cache A]
+    AppA2 --> CacheA
+    AppA1 --> DBA[Primary DB]
+    AppA2 --> DBA
+    end
+    
+    subgraph "Region B"
+    LBB[Load Balancer B] --> AppB1[App Server B1]
+    LBB --> AppB2[App Server B2]
+    AppB1 --> CacheB[Cache B]
+    AppB2 --> CacheB
+    AppB1 --> DBB[Replica DB]
+    AppB2 --> DBB
+    end
+    
+    DBA <--> DBB
+    
+    CDN[Content Delivery Network] --> LBA
+    CDN --> LBB
+    end
+    
+    Users((Users)) --> CDN

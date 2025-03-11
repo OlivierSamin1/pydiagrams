@@ -1,0 +1,33 @@
+graph TD
+    Start((Start)) --> Login{User Logged In?}
+    Login -->|No| ShowLoginForm[Show Login Form]
+    ShowLoginForm --> SubmitLoginForm[Submit Credentials]
+    SubmitLoginForm --> ValidCredentials{Valid Credentials?}
+    ValidCredentials -->|No| ShowError[Show Error Message]
+    ShowError --> ShowLoginForm
+    ValidCredentials -->|Yes| Login
+    
+    Login -->|Yes| ShowProductCatalog[Show Product Catalog]
+    ShowProductCatalog --> SearchFilter[Search/Filter Products]
+    SearchFilter --> SelectProduct[Select Product]
+    SelectProduct --> ShowProductDetails[Show Product Details]
+    ShowProductDetails --> AddToCart{Add to Cart?}
+    
+    AddToCart -->|No| ShowProductCatalog
+    AddToCart -->|Yes| UpdateCart[Update Shopping Cart]
+    UpdateCart --> Checkout{Proceed to Checkout?}
+    
+    Checkout -->|No| ShowProductCatalog
+    Checkout -->|Yes| ShowCartSummary[Show Cart Summary]
+    ShowCartSummary --> EnterShippingInfo[Enter Shipping Information]
+    EnterShippingInfo --> EnterPaymentInfo[Enter Payment Information]
+    EnterPaymentInfo --> ConfirmOrder[Confirm Order]
+    ConfirmOrder --> ProcessPayment[Process Payment]
+    ProcessPayment --> PaymentSuccessful{Payment Successful?}
+    
+    PaymentSuccessful -->|No| ShowPaymentError[Show Payment Error]
+    ShowPaymentError --> EnterPaymentInfo
+    
+    PaymentSuccessful -->|Yes| CreateOrder[Create Order]
+    CreateOrder --> SendConfirmation[Send Order Confirmation]
+    SendConfirmation --> End((End))

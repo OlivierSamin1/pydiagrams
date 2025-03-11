@@ -1,0 +1,44 @@
+graph TD
+    subgraph "Frontend Layer"
+    WebUI[Web UI]
+    MobileApp[Mobile App]
+    end
+    
+    subgraph "API Gateway Layer"
+    APIGateway[API Gateway]
+    end
+    
+    subgraph "Service Layer"
+    AuthService[Authentication Service]
+    UserService[User Service]
+    ProductService[Product Service]
+    CartService[Cart Service]
+    OrderService[Order Service]
+    PaymentService[Payment Service]
+    NotificationService[Notification Service]
+    end
+    
+    subgraph "Data Layer"
+    UserDB[(User Database)]
+    ProductDB[(Product Database)]
+    OrderDB[(Order Database)]
+    CartDB[(Cart Database)]
+    end
+    
+    WebUI --> APIGateway
+    MobileApp --> APIGateway
+    
+    APIGateway --> AuthService
+    APIGateway --> UserService
+    APIGateway --> ProductService
+    APIGateway --> CartService
+    APIGateway --> OrderService
+    
+    AuthService --> UserDB
+    UserService --> UserDB
+    ProductService --> ProductDB
+    CartService --> CartDB
+    OrderService --> OrderDB
+    OrderService --> ProductService
+    OrderService --> PaymentService
+    OrderService --> NotificationService

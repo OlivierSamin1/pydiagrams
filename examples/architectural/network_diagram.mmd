@@ -1,0 +1,18 @@
+graph TB
+    subgraph "Cloud Environment"
+    LB[Load Balancer] --> AppServer1[App Server 1]
+    LB --> AppServer2[App Server 2]
+    AppServer1 --> Cache[Redis Cache]
+    AppServer2 --> Cache
+    AppServer1 --> DB[(Database Cluster)]
+    AppServer2 --> DB
+    end
+    
+    subgraph "Corporate Network"
+    Firewall --> AdminPortal[Admin Portal]
+    AdminPortal --> VPN[VPN Connection]
+    end
+    
+    Internet((Internet)) --> Firewall
+    Internet --> LB
+    VPN --> LB

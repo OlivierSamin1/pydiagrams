@@ -1,0 +1,17 @@
+graph LR
+    User((User)) --> |1. Submit Order| OrderProcess[Order Process]
+    OrderProcess --> |2. Validate Order| Validation[Validation Process]
+    Validation --> |3. Check Inventory| InventoryDB[(Inventory DB)]
+    InventoryDB --> |4. Inventory Status| Validation
+    Validation --> |5. Validation Result| OrderProcess
+    
+    OrderProcess --> |6. Create Order| OrderDB[(Order DB)]
+    OrderProcess --> |7. Request Payment| PaymentProcess[Payment Process]
+    PaymentProcess --> |8. Process Payment| PaymentGateway[Payment Gateway]
+    PaymentGateway --> |9. Payment Result| PaymentProcess
+    PaymentProcess --> |10. Payment Status| OrderProcess
+    
+    OrderProcess --> |11. Order Confirmation| User
+    OrderProcess --> |12. Trigger Fulfillment| FulfillmentProcess[Fulfillment Process]
+    FulfillmentProcess --> |13. Update Inventory| InventoryDB
+    FulfillmentProcess --> |14. Schedule Delivery| DeliveryProcess[Delivery Process]

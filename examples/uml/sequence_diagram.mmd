@@ -1,0 +1,32 @@
+sequenceDiagram
+    actor User
+    participant Frontend
+    participant API
+    participant Auth
+    participant DB
+    participant Email
+    
+    User->>Frontend: Access Application
+    Frontend->>API: Request Initial Data
+    API->>DB: Query Data
+    DB-->>API: Return Data
+    API-->>Frontend: Send Initial Data
+    Frontend-->>User: Display UI
+    
+    User->>Frontend: Submit Login
+    Frontend->>API: Login Request
+    API->>Auth: Validate Credentials
+    Auth->>DB: Query User
+    DB-->>Auth: Return User Data
+    Auth-->>API: Authentication Result
+    API-->>Frontend: Login Response + Token
+    Frontend-->>User: Display Dashboard
+    
+    User->>Frontend: Place Order
+    Frontend->>API: Create Order Request
+    API->>DB: Save Order
+    DB-->>API: Order Created
+    API->>Email: Send Order Confirmation
+    Email-->>User: Order Confirmation Email
+    API-->>Frontend: Order Creation Response
+    Frontend-->>User: Order Confirmation Page

@@ -1,0 +1,14 @@
+graph TD
+    subgraph "Digital Banking System"
+    WebApp[Web Application] --> API[API Gateway]
+    MobileApp[Mobile App] --> API
+    API --> AuthService[Authentication Service]
+    API --> AccountService[Account Service]
+    API --> TransactionService[Transaction Service]
+    API --> NotificationService[Notification Service]
+    AccountService --> DB[(Account Database)]
+    TransactionService --> TransactionDB[(Transaction Database)]
+    NotificationService --> Queue[Message Queue]
+    Queue --> EmailWorker[Email Worker]
+    Queue --> SMSWorker[SMS Worker]
+    end
