@@ -1,10 +1,13 @@
 """
-Mermaid renderer for PyDiagrams.
+Mermaid renderer for SVG and PNG output.
 """
 
 import os
+import sys
+import tempfile
+import subprocess
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 
 class MermaidRenderer:
@@ -12,55 +15,116 @@ class MermaidRenderer:
     
     def __init__(self):
         """Initialize the Mermaid renderer."""
-        pass
+        # Check if mmdc (Mermaid CLI) is installed
+        self.has_mmdc = self._check_mmdc_installed()
         
-    def render(self, diagram_data: Dict[str, Any], output_path: str) -> str:
-        """
-        Render Mermaid diagram data to an SVG file.
-        
-        Args:
-            diagram_data: Dictionary with diagram data
-            output_path: File path for output
-            
-        Returns:
-            Path to the rendered file
-        """
-        # For now, we'll create a simple SVG with a reference to the Mermaid content
-        content = diagram_data.get('raw_content', '')
-        svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
-  <foreignObject width="100%" height="100%">
-    <div xmlns="http://www.w3.org/1999/xhtml">
-      <pre class="mermaid">
-{content}
-      </pre>
-      <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-      <script>mermaid.initialize({{startOnLoad:true}});</script>
-    </div>
-  </foreignObject>
-</svg>"""
-        
-        # Write the SVG to the output file
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(svg_content)
-            
-        return output_path
+        if not self.has_mmdc:
+            print("Warning: 'mmdc' (Mermaid CLI) not found. Using fallback renderer.", file=sys.stderr)
+            print("For best results, install the Mermaid CLI with: npm install -g @mermaid-js/mermaid-cli", file=sys.stderr)
     
-    def render_png(self, diagram_data: Dict[str, Any], output_path: str) -> str:
+    def _check_mmdc_installed(self) -> bool:
         """
-        Render Mermaid diagram data to a PNG file.
+        Check if mmdc (Mermaid CLI) is installed.
+        
+        Returns:
+            bool: True if mmdc is available, False otherwise
+        """
+        try:
+            subprocess.run(['mmdc', '--version'], 
+                          stdout=subprocess.PIPE, 
+                          stderr=subprocess.PIPE,
+                          check=False)
+            return True
+        except FileNotFoundError:
+            return False
+    
+    def render(self, diagram_data: Dict[str, Any], output_path: str, output_format: str = 'svg') -> str:
+        """
+        Render a Mermaid diagram to SVG or PNG.
         
         Args:
             diagram_data: Dictionary with diagram data
-            output_path: File path for output
+            output_path: Path to save the rendered diagram
+            output_format: Output format ('svg' or 'png')
             
         Returns:
-            Path to the rendered file
+            str: Path to the rendered diagram
         """
-        # For now, we'll create a simple empty PNG
-        # In a real implementation, we would use a Mermaid renderer to generate a PNG
-        with open(output_path, 'wb') as f:
-            # Create a simple PNG with the text "Mermaid Diagram"
-            # This is just a placeholder
-            f.write(b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\x0bIDAT\x08\xd7c\xf8\xff\xff?\x00\x05\xfe\x02\xfe\xdc\xcc\x59\xe7\x00\x00\x00\x00IEND\xaeB`\x82')
+        if diagram_data['type'] != 'mermaid':
+            raise ValueError(f"Mermaid renderer only supports Mermaid diagrams, got {diagram_data['type']}")
+        
+        diagram_content = diagram_data['raw_content']
+        
+        # Create output directory if it doesn't exist
+        output_dir = os.path.dirname(output_path)
+        if output_dir and not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        
+        # Choose rendering method
+        if self.has_mmdc:
+            return self._render_with_mmdc(diagram_content, output_path, output_format)
+        else:
+            return self._render_fallback(diagram_content, output_path, output_format)
+    
+    def _render_with_mmdc(self, diagram_content: str, output_path: str, output_format: str) -> str:
+        """
+        Render a Mermaid diagram using the Mermaid CLI.
+        
+        Args:
+            diagram_content: Mermaid diagram content
+            output_path: Path to save the rendered diagram
+            output_format: Output format ('svg' or 'png')
             
+        Returns:
+            str: Path to the rendered diagram
+        """
+        # Create a temporary file for the Mermaid content
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.mmd', delete=False) as temp_file:
+            temp_file.write(diagram_content)
+            temp_path = temp_file.name
+        
+        try:
+            # Run mmdc
+            cmd = [
+                'mmdc',
+                '-i', temp_path,
+                '-o', output_path,
+                '-t', 'default',  # TODO: Add support for themes
+                '-b', 'transparent'
+            ]
+            
+            if output_format == 'png':
+                cmd.extend(['-p'])
+            
+            subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            
+            return output_path
+        finally:
+            # Clean up the temporary file
+            try:
+                os.unlink(temp_path)
+            except Exception:
+                pass
+    
+    def _render_fallback(self, diagram_content: str, output_path: str, output_format: str) -> str:
+        """
+        Fallback renderer when mmdc is not available.
+        
+        For now, just writes the Mermaid content to the output file with
+        a message indicating that mmdc should be installed.
+        
+        Args:
+            diagram_content: Mermaid diagram content
+            output_path: Path to save the rendered diagram
+            output_format: Output format ('svg' or 'png')
+            
+        Returns:
+            str: Path to the output file
+        """
+        # Write the Mermaid content to the output file
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(diagram_content)
+            f.write("\n\n# Note: Install Mermaid CLI for proper rendering: npm install -g @mermaid-js/mermaid-cli")
+        
+        print(f"Warning: Using fallback renderer. The output file contains the raw Mermaid content.", file=sys.stderr)
         return output_path 

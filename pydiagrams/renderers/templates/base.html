@@ -3,282 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}</title>
-    
-    <!-- Theme system -->
-    {% if inline_resources %}
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="themes.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="themes.js"></script>
     <style>
-        {{ inline_css }}
+        :root {
+            --diagram-width: {{width}}px;
+            --diagram-height: {{height}}px;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .dark-mode {
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+        
+        .diagram-container {
+            width: var(--diagram-width);
+            height: var(--diagram-height);
+            max-width: 100%;
+            margin: 0 auto;
+            overflow: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .dark-mode .diagram-container {
+            border-color: #444;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px auto;
+            max-width: var(--diagram-width);
+        }
+        
+        button, select {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .dark-mode button, .dark-mode select {
+            background-color: #333;
+            color: #fff;
+        }
+        
+        button:hover, select:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .dark-mode button:hover, .dark-mode select:hover {
+            background-color: #444;
+        }
+        
+        #zoom-level {
+            display: inline-block;
+            margin-left: 10px;
+            min-width: 40px;
+        }
+        
+        .responsive-info {
+            margin-top: 20px;
+            font-size: 14px;
+            text-align: center;
+            color: #666;
+        }
+        
+        .dark-mode .responsive-info {
+            color: #aaa;
+        }
+        
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            .diagram-container {
+                width: 100%;
+                height: 400px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
     </style>
+</head>
+<body>
+    <div class="diagram-container" id="diagram-container">
+        {{body_content}}
+    </div>
+    
+    <div class="controls">
+        <button id="zoom-in">Zoom In</button>
+        <button id="zoom-out">Zoom Out</button>
+        <button id="reset-zoom">Reset</button>
+        <span id="zoom-level">100%</span>
+        
+        <select id="theme-selector">
+            <option value="default">Default Theme</option>
+            <option value="forest">Forest Theme</option>
+            <option value="dark">Dark Theme</option>
+            <option value="neutral">Neutral Theme</option>
+            <option value="blue">Blue Theme</option>
+            <option value="high-contrast">High Contrast</option>
+        </select>
+        
+        <button id="toggle-dark-mode">Toggle Dark Mode</button>
+        <button id="export-svg">Export SVG</button>
+        <button id="export-png">Export PNG</button>
+    </div>
+    
+    <div class="responsive-info">
+        This diagram is responsive and supports zooming, panning, and theme changes.
+    </div>
+
     <script>
-        {{ inline_js }}
-    </script>
-    {% else %}
-    <link rel="stylesheet" href="{{ static_url }}/css/themes.css">
-    <script src="{{ static_url }}/js/themes.js"></script>
-    {% endif %}
-    
-    <!-- Custom styles specific to diagram type -->
-    {% block styles %}{% endblock %}
-    
-    <!-- PDF Export Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
-    <!-- Base scripts common to all diagrams -->
-    <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            // Zoom controls
-            let scale = 1;
-            const diagram = document.getElementById('diagram');
-            
-            document.getElementById('zoom-in').addEventListener('click', function() {
-                scale *= 1.2;
-                updateScale();
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize mermaid
+            mermaid.initialize({
+                theme: '{{theme}}',
+                startOnLoad: true
             });
             
-            document.getElementById('zoom-out').addEventListener('click', function() {
-                scale /= 1.2;
-                updateScale();
-            });
-            
-            document.getElementById('reset-zoom').addEventListener('click', function() {
-                scale = 1;
-                updateScale();
-            });
-            
-            function updateScale() {
-                diagram.style.transform = `scale(${scale})`;
+            // Apply dark mode if needed
+            if ('{{dark_mode}}' === 'True') {
+                document.body.classList.add('dark-mode');
             }
             
-            // Pan controls
-            let isPanning = false;
-            let startX, startY;
-            let translateX = 0, translateY = 0;
+            // Set theme selector to match initial theme
+            document.getElementById('theme-selector').value = '{{theme}}';
             
+            // Initialize interactivity
+            let zoomLevel = 1;
             const container = document.getElementById('diagram-container');
+            const zoomLevelDisplay = document.getElementById('zoom-level');
             
-            container.addEventListener('mousedown', function(e) {
-                // Only initiate pan if not clicking on a control
-                if (!e.target.closest('#controls') && !e.target.closest('#theme-controls')) {
-                    isPanning = true;
-                    startX = e.clientX - translateX;
-                    startY = e.clientY - translateY;
-                    container.style.cursor = 'grabbing';
+            // Zoom in function
+            document.getElementById('zoom-in').addEventListener('click', function() {
+                zoomLevel *= 1.2;
+                updateZoom();
+            });
+            
+            // Zoom out function
+            document.getElementById('zoom-out').addEventListener('click', function() {
+                zoomLevel /= 1.2;
+                updateZoom();
+            });
+            
+            // Reset zoom function
+            document.getElementById('reset-zoom').addEventListener('click', function() {
+                zoomLevel = 1;
+                updateZoom();
+            });
+            
+            // Update zoom level display and apply zoom
+            function updateZoom() {
+                zoomLevelDisplay.textContent = Math.round(zoomLevel * 100) + '%';
+                
+                // Apply zoom to the diagram
+                const diagram = container.querySelector('.mermaid svg');
+                if (diagram) {
+                    diagram.style.transform = `scale(${zoomLevel})`;
+                    diagram.style.transformOrigin = 'top left';
                 }
+            }
+            
+            // Theme selector
+            document.getElementById('theme-selector').addEventListener('change', function() {
+                // Update mermaid theme
+                mermaid.initialize({
+                    theme: this.value,
+                    startOnLoad: true
+                });
+                
+                // Redraw mermaid
+                container.querySelector('.mermaid').removeAttribute('data-processed');
+                mermaid.init(undefined, '.mermaid');
             });
             
-            document.addEventListener('mousemove', function(e) {
-                if (isPanning) {
-                    translateX = e.clientX - startX;
-                    translateY = e.clientY - startY;
-                    diagram.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-                }
+            // Toggle dark mode
+            document.getElementById('toggle-dark-mode').addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                
+                // Redraw mermaid for better visibility
+                container.querySelector('.mermaid').removeAttribute('data-processed');
+                mermaid.init(undefined, '.mermaid');
             });
             
-            document.addEventListener('mouseup', function() {
-                isPanning = false;
-                container.style.cursor = 'default';
-            });
-            
-            // Export Modal
-            const exportButton = document.getElementById('export-button');
-            const exportModal = document.getElementById('export-modal');
-            const closeModal = document.getElementById('close-modal');
-            
-            exportButton.addEventListener('click', function() {
-                exportModal.style.display = 'flex';
-            });
-            
-            closeModal.addEventListener('click', function() {
-                exportModal.style.display = 'none';
-            });
-            
-            // Close modal when clicking outside
-            exportModal.addEventListener('click', function(e) {
-                if (e.target === exportModal) {
-                    exportModal.style.display = 'none';
-                }
-            });
-            
-            // Export options
+            // Export as SVG
             document.getElementById('export-svg').addEventListener('click', function() {
-                exportModal.style.display = 'none';
-                const filename = document.getElementById('export-filename').value || '{{ title }}';
-                const quality = document.getElementById('export-quality').value || 1;
-                exportSVG(filename, parseFloat(quality));
+                const svg = container.querySelector('svg');
+                if (svg) {
+                    const svgData = new XMLSerializer().serializeToString(svg);
+                    const blob = new Blob([svgData], {type: 'image/svg+xml'});
+                    const url = URL.createObjectURL(blob);
+                    
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = '{{title}}.svg';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
             });
             
+            // Export as PNG
             document.getElementById('export-png').addEventListener('click', function() {
-                exportModal.style.display = 'none';
-                const filename = document.getElementById('export-filename').value || '{{ title }}';
-                const quality = document.getElementById('export-quality').value || 1;
-                exportPNG(filename, parseFloat(quality));
-            });
-            
-            document.getElementById('export-pdf').addEventListener('click', function() {
-                exportModal.style.display = 'none';
-                const filename = document.getElementById('export-filename').value || '{{ title }}';
-                const quality = document.getElementById('export-quality').value || 1;
-                exportPDF(filename, parseFloat(quality));
-            });
-            
-            // Progress indicator
-            function showProgress(message) {
-                const progress = document.getElementById('progress-indicator');
-                const messageElem = document.getElementById('progress-message');
-                messageElem.textContent = message;
-                progress.style.display = 'flex';
-            }
-            
-            function hideProgress() {
-                const progress = document.getElementById('progress-indicator');
-                progress.style.display = 'none';
-            }
-            
-            // Export functions
-            function exportSVG(filename, quality) {
-                showProgress("Generating SVG...");
-                
-                if (typeof window.exportDiagramSVG === 'function') {
-                    try {
-                        window.exportDiagramSVG(filename, quality);
-                    } catch (error) {
-                        console.error('Error exporting SVG:', error);
-                        alert('Error exporting SVG: ' + error.message);
-                    } finally {
-                        hideProgress();
-                    }
-                } else {
-                    hideProgress();
-                    alert('SVG export is not available for this diagram type.');
-                }
-            }
-            
-            function exportPNG(filename, quality) {
-                showProgress("Generating PNG...");
-                
-                if (typeof window.exportDiagramPNG === 'function') {
-                    try {
-                        window.exportDiagramPNG(filename, quality);
-                    } catch (error) {
-                        console.error('Error exporting PNG:', error);
-                        alert('Error exporting PNG: ' + error.message);
-                    } finally {
-                        hideProgress();
-                    }
-                } else {
-                    hideProgress();
-                    alert('PNG export is not available for this diagram type.');
-                }
-            }
-            
-            function exportPDF(filename, quality) {
-                showProgress("Generating PDF...");
-                
-                if (typeof window.exportDiagramPDF === 'function') {
-                    try {
-                        window.exportDiagramPDF(filename, quality);
-                    } catch (error) {
-                        console.error('Error exporting PDF:', error);
-                        alert('Error exporting PDF: ' + error.message);
-                    } finally {
-                        hideProgress();
-                    }
-                } else {
-                    // Default PDF export implementation
-                    try {
-                        const { jsPDF } = window.jspdf;
-                        const diagramElement = document.getElementById('diagram');
+                const svg = container.querySelector('svg');
+                if (svg) {
+                    const canvas = document.createElement('canvas');
+                    const svgSize = svg.getBoundingClientRect();
+                    canvas.width = svgSize.width;
+                    canvas.height = svgSize.height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    const image = new Image();
+                    
+                    // Convert SVG to data URL
+                    const svgData = new XMLSerializer().serializeToString(svg);
+                    const svgBlob = new Blob([svgData], {type: 'image/svg+xml'});
+                    const svgUrl = URL.createObjectURL(svgBlob);
+                    
+                    // When image loads, draw to canvas and export
+                    image.onload = function() {
+                        ctx.fillStyle = 'white';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(image, 0, 0);
+                        URL.revokeObjectURL(svgUrl);
                         
-                        html2canvas(diagramElement, { 
-                            scale: quality * 2,  // Higher quality
-                            backgroundColor: document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#ffffff'
-                        }).then(canvas => {
-                            const imgData = canvas.toDataURL('image/png');
-                            const pdf = new jsPDF({
-                                orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
-                                unit: 'mm'
-                            });
-                            
-                            // Calculate dimensions to fit the content in the PDF
-                            const imgWidth = pdf.internal.pageSize.getWidth();
-                            const imgHeight = canvas.height * imgWidth / canvas.width;
-                            
-                            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-                            pdf.save(`${filename}.pdf`);
-                            hideProgress();
-                        });
-                    } catch (error) {
-                        console.error('Error creating PDF:', error);
-                        alert('Error creating PDF: ' + error.message);
-                        hideProgress();
-                    }
+                        // Convert canvas to PNG data URL
+                        const pngUrl = canvas.toDataURL('image/png');
+                        
+                        // Download PNG
+                        const a = document.createElement('a');
+                        a.href = pngUrl;
+                        a.download = '{{title}}.png';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    };
+                    
+                    image.src = svgUrl;
                 }
-            }
-            
-            // Export the functions to global scope
-            window.showProgress = showProgress;
-            window.hideProgress = hideProgress;
+            });
         });
     </script>
-    
-    <!-- Diagram-specific JavaScript libraries -->
-    {% block libraries %}{% endblock %}
-</head>
-<body class="{% if dark_mode %}dark-mode{% endif %}">
-    <div id="diagram-container">
-        <div id="diagram">
-            {% block diagram %}{% endblock %}
-        </div>
-    </div>
-    
-    <div id="controls">
-        <div class="control-group">
-            <button id="zoom-in" title="Zoom In">+</button>
-            <button id="zoom-out" title="Zoom Out">-</button>
-            <button id="reset-zoom" title="Reset Zoom">Reset</button>
-        </div>
-        <div class="control-group">
-            <button id="export-button" class="secondary" title="Export Diagram">Export</button>
-        </div>
-    </div>
-    
-    <!-- Export Modal -->
-    <div id="export-modal" class="modal">
-        <div class="modal-content">
-            <span id="close-modal" class="modal-close">&times;</span>
-            <h3 class="modal-title">Export Diagram</h3>
-            
-            <div class="export-inputs">
-                <input type="text" id="export-filename" placeholder="Filename (without extension)" value="{{ title }}">
-                <input type="number" id="export-quality" placeholder="Quality (1-3)" value="2" min="1" max="3" step="0.5">
-            </div>
-            
-            <div class="export-options">
-                <div class="export-option">
-                    <span>SVG Vector Format</span>
-                    <button id="export-svg" class="secondary">Export SVG</button>
-                </div>
-                <div class="export-option">
-                    <span>PNG Image Format</span>
-                    <button id="export-png" class="secondary">Export PNG</button>
-                </div>
-                <div class="export-option">
-                    <span>PDF Document Format</span>
-                    <button id="export-pdf" class="secondary">Export PDF</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Progress Indicator -->
-    <div id="progress-indicator">
-        <div class="spinner"></div>
-        <div id="progress-message">Processing...</div>
-    </div>
-    
-    <!-- Diagram-specific scripts -->
-    {% block scripts %}{% endblock %}
 </body>
 </html> 

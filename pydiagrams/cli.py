@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Command-line interface for PyDiagrams.
 
@@ -17,114 +18,109 @@ from pydiagrams.parsers.diagram_utils import (
 
 
 def main():
-    """Run the command-line interface."""
+    """
+    Main entry point for the CLI.
+    """
     parser = argparse.ArgumentParser(
-        description="Generate diagrams from Mermaid or PlantUML files."
+        description='Generate diagrams from Mermaid files',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Generate SVG from a Mermaid file (default)
+  pydiagrams my_diagram.mmd -o output.svg
+  
+  # Generate PNG from a Mermaid file
+  pydiagrams my_diagram.mmd -o output.png -f png
+  
+  # Generate interactive HTML with a theme and dark mode
+  pydiagrams my_diagram.mmd -o output.html -f html --theme blue --dark-mode
+  
+  # Generate HTML with inline resources for better portability
+  pydiagrams my_diagram.mmd -o output.html -f html --inline-resources
+        """
     )
     
     parser.add_argument(
-        "file",
-        help="Path to the Mermaid or PlantUML file"
+        'input_file',
+        help='Input diagram file (Mermaid .mmd)'
     )
     
     parser.add_argument(
-        "-o", "--output",
-        help="Path to the output file (default: same name as input with appropriate extension)"
+        '-o', '--output',
+        dest='output_file',
+        help='Output file path (default: same as input with appropriate extension)'
     )
     
     parser.add_argument(
-        "-f", "--format",
-        choices=["svg", "png", "html", "pdf"],
-        default="svg",
-        help="Output format (default: svg)"
+        '-f', '--format',
+        dest='output_format',
+        choices=['svg', 'png', 'html'],
+        default='svg',
+        help='Output format (default: svg)'
     )
     
     parser.add_argument(
-        "-q", "--quality",
-        type=float,
-        default=2.0,
-        help="Quality factor for export (1.0-3.0, default: 2.0)"
+        '--theme',
+        dest='theme',
+        choices=['default', 'forest', 'dark', 'neutral', 'blue', 'high-contrast'],
+        default='default',
+        help='Theme for HTML output (default: default)'
     )
     
     parser.add_argument(
-        "-v", "--verbose",
-        action="store_true",
-        help="Enable verbose output"
+        '--dark-mode',
+        dest='dark_mode',
+        action='store_true',
+        help='Use dark mode for HTML output'
     )
     
     parser.add_argument(
-        "--open",
-        action="store_true",
-        help="Open the resulting file after generation (particularly useful for HTML)"
-    )
-    
-    parser.add_argument(
-        "--dark-mode",
-        action="store_true",
-        help="Use dark mode for HTML output"
-    )
-    
-    parser.add_argument(
-        "--inline-resources",
-        action="store_true",
-        help="Inline CSS and JS resources in HTML (avoids CORS issues when viewing locally)"
+        '--inline-resources',
+        dest='inline_resources',
+        action='store_true',
+        help='Inline CSS and JS resources in HTML output for better portability'
     )
     
     args = parser.parse_args()
     
-    # Check if the input file exists
-    input_file = Path(args.file)
-    if not input_file.exists():
-        print(f"Error: File not found: {input_file}")
-        sys.exit(1)
-    
-    # Check if the input file is a Mermaid or PlantUML file
-    if not is_diagram_file(input_file):
-        print(f"Error: Not a Mermaid or PlantUML file: {input_file}")
-        sys.exit(1)
-    
-    # Determine output path
-    output_path = args.output
-    if not output_path:
-        output_path = input_file.with_suffix(f".{args.format}")
-    
-    if args.verbose:
-        diagram_type = detect_diagram_file_type(input_file)
-        print(f"Generating {args.format.upper()} diagram from {diagram_type.capitalize()} file: {input_file}")
-        print(f"Output file: {output_path}")
-        print(f"Quality: {args.quality}")
-        if args.format == "html":
-            print(f"Dark mode: {'enabled' if args.dark_mode else 'disabled'}")
-            print(f"Inline resources: {'enabled' if args.inline_resources else 'disabled'}")
+    # Check if input file exists
+    if not os.path.exists(args.input_file):
+        print(f"Error: Input file not found: {args.input_file}", file=sys.stderr)
+        return 1
     
     try:
+        # Detect diagram type to validate it's supported
+        diagram_type = detect_diagram_file_type(args.input_file)
+        
+        if diagram_type != 'mermaid':
+            print(f"Error: Only Mermaid diagrams are supported. Found: {diagram_type}", file=sys.stderr)
+            return 1
+            
+        # Set output file if not provided
+        if not args.output_file:
+            input_path = Path(args.input_file)
+            args.output_file = str(input_path.with_suffix(f'.{args.output_format}'))
+        
         # Generate the diagram
-        output_file = generate_diagram_from_file(
-            input_file,
-            output_path,
-            args.format,
-            args.dark_mode,
-            args.inline_resources
+        output_path = generate_diagram_from_file(
+            args.input_file,
+            args.output_file,
+            output_format=args.output_format,
+            theme=args.theme,
+            dark_mode=args.dark_mode,
+            inline_resources=args.inline_resources
         )
         
-        if args.verbose:
-            print(f"Successfully generated diagram: {output_file}")
-            
-        # Open the file if requested
-        if args.open:
-            if args.verbose:
-                print(f"Opening {output_file}...")
-                
-            if sys.platform == 'darwin':  # macOS
-                os.system(f'open "{output_file}"')
-            elif sys.platform == 'win32':  # Windows
-                os.startfile(output_file)
-            else:  # Linux
-                os.system(f'xdg-open "{output_file}"')
+        print(f"Generated {args.output_format.upper()} diagram: {output_path}")
+        return 0
+    
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
     except Exception as e:
-        print(f"Error generating diagram: {e}")
-        sys.exit(1)
+        print(f"Unexpected error: {e}", file=sys.stderr)
+        return 1
 
 
-if __name__ == "__main__":
-    main() 
+if __name__ == '__main__':
+    sys.exit(main()) 

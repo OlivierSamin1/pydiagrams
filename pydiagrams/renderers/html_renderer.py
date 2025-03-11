@@ -1,108 +1,42 @@
 """
-HTML Renderer for PyDiagrams.
-
-This module provides functionality to render diagrams as interactive HTML.
+HTML renderer for Mermaid diagrams.
 """
 
 import os
-import base64
-import zlib
-import shutil
+import sys
+import json
 from pathlib import Path
-from typing import Dict, Any, Optional
-from jinja2 import Environment, FileSystemLoader
+from typing import Dict, Any, Optional, List, Union
 
+THEMES = [
+    "default", 
+    "forest", 
+    "dark", 
+    "neutral", 
+    "blue",
+    "high-contrast"
+]
 
 class HTMLRenderer:
-    def _convert_plantuml_to_mermaid(self, content):
+    """Renderer for diagrams in HTML format with themes and interactive features."""
+    
+    def __init__(
+        self, 
+        width: int = 800, 
+        height: int = 600, 
+        interactive: bool = True,
+        dark_mode: bool = False,
+        inline_resources: bool = True
+    ):
         """
-        Convert PlantUML diagram to Mermaid format
+        Initialize HTML renderer.
         
         Args:
-            content: PlantUML diagram content
-            
-        Returns:
-            Mermaid diagram content
-        """
-        import re
-        
-        # Remove @startuml and @enduml tags
-        content = re.sub(r'@startuml.*?\n', '', content)
-        content = re.sub(r'@enduml.*?\n', '', content)
-        
-        # Detect diagram type
-        content_lower = content.lower()
-        if "actor" in content_lower or "participant" in content_lower or "->" in content_lower and not "class" in content_lower:
-            # Sequence diagram
-            # Convert title
-            title_match = re.search(r'title\s+(.*?)$', content, re.MULTILINE)
-            if title_match:
-                title = title_match.group(1)
-                content = re.sub(r'title\s+.*?\n', '', content)
-                mermaid_title = f"sequenceDiagram\n    title: {title}\n"
-            else:
-                mermaid_title = "sequenceDiagram\n"
-            
-            # Convert participants
-            participant_pattern = r'participant\s+"([^"]+)"\s+as\s+(\w+)'
-            actor_pattern = r'actor\s+"([^"]+)"\s+as\s+(\w+)'
-            database_pattern = r'database\s+"([^"]+)"\s+as\s+(\w+)'
-            
-            def convert_participant_line(match):
-                name = match.group(1)
-                alias = match.group(2)
-                return f"    participant {alias} as \"{name}\""
-            
-            content = re.sub(participant_pattern, convert_participant_line, content)
-            content = re.sub(actor_pattern, lambda m: f"    actor {m.group(2)} as \"{m.group(1)}\"", content)
-            content = re.sub(database_pattern, lambda m: f"    participant {m.group(2)} as \"{m.group(1)}\"", content)
-            
-            # Simple participants without quotes or aliases
-            content = re.sub(r'participant\s+(\w+)\s*$', r'    participant \1', content, flags=re.MULTILINE)
-            content = re.sub(r'actor\s+(\w+)\s*$', r'    actor \1', content, flags=re.MULTILINE)
-            content = re.sub(r'database\s+(\w+)\s*$', r'    participant \1', content, flags=re.MULTILINE)
-            
-            # Convert arrows
-            content = re.sub(r'(\w+)\s*->\s*(\w+)\s*:\s*(.*?)$', r'    \1->>\2: \3', content, flags=re.MULTILINE)
-            content = re.sub(r'(\w+)\s*-->\s*(\w+)\s*:\s*(.*?)$', r'    \1-->>\2: \3', content, flags=re.MULTILINE)
-            
-            # Handle activation/deactivation
-            content = re.sub(r'activate\s+(\w+)', r'    activate \1', content)
-            content = re.sub(r'deactivate\s+(\w+)', r'    deactivate \1', content)
-            
-            # Handle notes
-            content = re.sub(r'note\s+(?:left|right)\s+of\s+(\w+)\s*:\s*(.*?)$', 
-                            r'    Note \1: \2', content, flags=re.MULTILINE)
-            
-            return mermaid_title + content.strip()
-        
-        elif "class" in content_lower or "<|--" in content_lower:
-            # Class diagram
-            mermaid_content = "classDiagram\n"
-            
-            # Placeholder for full class diagram conversion
-            return mermaid_content + "    " + content.strip().replace('\n', '\n    ')
-            
-        else:
-            # Default to flowchart for other diagram types
-            return f"graph TD\n    A[PlantUML converted to Mermaid]\n    B[Some features may not be fully supported]\n    A --> B"
-    
-    """Renderer for HTML output format."""
-    
-    # Default PlantUML server URL
-    PLANTUML_SERVER = "http://www.plantuml.com/plantuml"
-    
-    def __init__(self, width: int = 800, height: int = 600, interactive: bool = True, 
-                 dark_mode: bool = False, inline_resources: bool = False):
-        """
-        Initialize the HTML renderer.
-        
-        Args:
-            width: Canvas width
-            height: Canvas height
-            interactive: Whether to enable interactive features
+            width: Width of the diagram in pixels
+            height: Height of the diagram in pixels
+            interactive: Whether to make the diagram interactive
             dark_mode: Whether to use dark mode
-            inline_resources: Whether to inline CSS and JS resources (avoids CORS issues)
+            inline_resources: Whether to inline CSS and JS resources
         """
         self.width = width
         self.height = height
@@ -110,130 +44,131 @@ class HTMLRenderer:
         self.dark_mode = dark_mode
         self.inline_resources = inline_resources
         
-        # Set up Jinja2 environment
-        templates_dir = Path(__file__).parent / 'templates'
-        self.env = Environment(loader=FileSystemLoader(templates_dir))
+        # Get templates directory
+        self.templates_dir = Path(__file__).parent / "templates"
         
-        # Static files directory
-        self.static_dir = Path(__file__).parent / 'static'
+        if not self.templates_dir.exists():
+            raise FileNotFoundError(f"Templates directory not found: {self.templates_dir}")
+    
+    def get_template(self, template_name: str) -> str:
+        """
+        Get a template from the templates directory.
         
+        Args:
+            template_name: Name of the template file
+            
+        Returns:
+            str: Content of the template file
+        """
+        template_path = self.templates_dir / template_name
+        
+        if not template_path.exists():
+            raise FileNotFoundError(f"Template not found: {template_path}")
+        
+        with open(template_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    
+    def inject_resources(self, html_content: str) -> str:
+        """
+        Inject CSS and JS resources inline into the HTML content if inline_resources is True.
+        
+        Args:
+            html_content: HTML content to inject resources into
+            
+        Returns:
+            str: HTML content with resources injected
+        """
+        if not self.inline_resources:
+            return html_content
+            
+        # Read CSS file
+        css_path = self.templates_dir / "themes.css"
+        if css_path.exists():
+            with open(css_path, 'r', encoding='utf-8') as f:
+                css_content = f.read()
+                html_content = html_content.replace(
+                    '<link rel="stylesheet" href="themes.css">',
+                    f'<style>{css_content}</style>'
+                )
+        
+        # Read JS file
+        js_path = self.templates_dir / "themes.js"
+        if js_path.exists():
+            with open(js_path, 'r', encoding='utf-8') as f:
+                js_content = f.read()
+                html_content = html_content.replace(
+                    '<script src="themes.js"></script>',
+                    f'<script>{js_content}</script>'
+                )
+                
+        # Read Mermaid JS
+        mermaid_js_path = self.templates_dir / "mermaid.min.js"
+        if mermaid_js_path.exists():
+            with open(mermaid_js_path, 'r', encoding='utf-8') as f:
+                mermaid_js_content = f.read()
+                html_content = html_content.replace(
+                    '<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>',
+                    f'<script>{mermaid_js_content}</script>'
+                )
+        
+        return html_content
+    
     def render(self, diagram_data: Dict[str, Any], output_path: str) -> str:
         """
-        Render diagram data to an HTML file.
+        Render a diagram to HTML.
         
         Args:
             diagram_data: Dictionary with diagram data
-            output_path: File path for output
+            output_path: Path to save the rendered HTML
             
         Returns:
-            Path to the rendered file
+            str: Path to the rendered HTML file
         """
-        # Create the output directory if it doesn't exist
+        if diagram_data['type'] != 'mermaid':
+            raise ValueError(f"HTML renderer only supports Mermaid diagrams, got {diagram_data['type']}")
+        
+        # Get base HTML template
+        base_template = self.get_template("base.html")
+        
+        # Get mermaid template
+        mermaid_template = self.get_template("mermaid.html")
+        
+        # Set diagram content
+        diagram_content = diagram_data['raw_content']
+        
+        # Get diagram title
+        title = diagram_data.get('title', 'Mermaid Diagram')
+        
+        # Apply template
+        mermaid_html = mermaid_template.replace("{{diagram_content}}", diagram_content)
+        
+        # Apply theme if specified
+        theme = diagram_data.get('theme', 'default')
+        if theme not in THEMES:
+            print(f"Warning: Theme '{theme}' not found, using default theme instead")
+            theme = 'default'
+        
+        # Replace theme and dark mode placeholders
+        html_content = base_template.replace("{{title}}", title)
+        html_content = html_content.replace("{{body_content}}", mermaid_html)
+        html_content = html_content.replace("{{theme}}", theme)
+        html_content = html_content.replace("{{dark_mode}}", str(self.dark_mode).lower())
+        
+        # Create width and height styles
+        html_content = html_content.replace("{{width}}", str(self.width))
+        html_content = html_content.replace("{{height}}", str(self.height))
+        
+        # Inject resources if requested
+        if self.inline_resources:
+            html_content = self.inject_resources(html_content)
+        
+        # Create output directory if it doesn't exist
         output_dir = os.path.dirname(output_path)
         if output_dir and not os.path.exists(output_dir):
             os.makedirs(output_dir)
         
-        # Get diagram type and content
-        diagram_type = diagram_data.get('type', 'unknown')
-        
-        # Create a directory for static files if not inlining resources
-        output_path_obj = Path(output_path)
-        static_url = f"{output_path_obj.stem}_files"
-        
-        if not self.inline_resources:
-            static_output_dir = output_path_obj.parent / static_url
-            if not static_output_dir.exists():
-                static_output_dir.mkdir(exist_ok=True)
-                
-                # Copy CSS files
-                css_dir = static_output_dir / 'css'
-                css_dir.mkdir(exist_ok=True)
-                shutil.copy(self.static_dir / 'css' / 'themes.css', css_dir)
-                
-                # Copy JS files
-                js_dir = static_output_dir / 'js'
-                js_dir.mkdir(exist_ok=True)
-                shutil.copy(self.static_dir / 'js' / 'themes.js', js_dir)
-        
-        # Prepare context for template
-        context = {
-            'title': diagram_data.get('title', f'{diagram_type.capitalize()} Diagram'),
-            'width': self.width,
-            'height': self.height,
-            'interactive': self.interactive,
-            'dark_mode': self.dark_mode,
-            'inline_resources': self.inline_resources,
-            'static_url': static_url
-        }
-        
-        # If inlining resources, add the CSS and JS content to the context
-        if self.inline_resources:
-            css_file = self.static_dir / 'css' / 'themes.css'
-            js_file = self.static_dir / 'js' / 'themes.js'
-            
-            with open(css_file, 'r', encoding='utf-8') as f:
-                context['inline_css'] = f.read()
-                
-            with open(js_file, 'r', encoding='utf-8') as f:
-                context['inline_js'] = f.read()
-                
-            # Set Mermaid to use UMD/IIFE format instead of ESM for better compatibility
-            context['use_mermaid_umd'] = True
-        
-        # Choose the appropriate template based on diagram type
-        if diagram_type == 'mermaid':
-            template = self.env.get_template('mermaid.html')
-            # Add the raw Mermaid content to the context
-            context['diagram_content'] = diagram_data.get('raw_content', '')
-        elif diagram_type == 'plantuml':
-            template = self.env.get_template('plantuml.html')
-            # Add the raw PlantUML content to the context
-            context['diagram_content'] = diagram_data.get('raw_content', '')
-            # Generate image URL for PlantUML
-            encoded_content = self._encode_plantuml(context['diagram_content'])
-            context['diagram_image_url'] = f"{self.PLANTUML_SERVER}/svg/{encoded_content}"
-            context['plantuml_server'] = self.PLANTUML_SERVER
-            
-            # Convert PlantUML to Mermaid as a fallback
-            try:
-                context['mermaid_content'] = self._convert_plantuml_to_mermaid(context['diagram_content'])
-            except Exception as e:
-                print(f"Warning: Failed to convert PlantUML to Mermaid: {e}")
-                # Safely escape any quotes in the error message
-                error_msg = str(e).replace('"', '\\"')
-                context['mermaid_content'] = f"graph TD\n    A[Error converting PlantUML to Mermaid]"
-        else:
-            # For other diagram types, we'll need to implement custom templates
-            # For now, let's use a generic template
-            template = self.env.get_template('base.html')
-            context['diagram_content'] = 'Unsupported diagram type'
-        
-        # Render the template
-        html_content = template.render(**context)
-        
-        # Write the HTML to the output file
+        # Write to file
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(html_content)
         
-        return output_path
-    
-    def _encode_plantuml(self, text: str) -> str:
-        """
-        Encode PlantUML text for use with the PlantUML server.
-
-        Args:
-            text: PlantUML text
-
-        Returns:
-            Encoded string for URL
-        """
-        # Add the ~1 prefix to indicate DEFLATE encoding
-        # Convert to UTF-8 and compress with zlib
-        zlibbed = zlib.compress(text.encode('utf-8'))
-        
-        # Convert to base64 and replace unsafe characters
-        compressed = base64.b64encode(zlibbed).decode('ascii')
-        compressed = compressed.replace('+', '-').replace('/', '_')
-        
-        # Add ~1 prefix to indicate DEFLATE encoding
-        return f"~1{compressed}" 
+        return output_path 

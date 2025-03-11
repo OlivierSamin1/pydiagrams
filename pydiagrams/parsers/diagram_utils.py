@@ -6,163 +6,149 @@ including file detection, parsing, and rendering.
 """
 
 import os
-import subprocess
-import tempfile
 from pathlib import Path
-from typing import Optional, Union, Dict, Any, Tuple
+from typing import Dict, Any, Optional, Union
 
-from pydiagrams.parsers.base_parser import BaseParser
-from pydiagrams.parsers.mermaid_parser import MermaidParser
-from pydiagrams.parsers.plantuml_parser import PlantUMLParser
-
-
-def detect_diagram_file_type(file_path: Union[str, Path]) -> Optional[str]:
+def detect_diagram_file_type(file_path: str) -> str:
     """
-    Detect the diagram type from a file.
-
-    Args:
-        file_path: Path to the file to analyze
-
-    Returns:
-        String identifying the diagram type ('mermaid', 'plantuml') or None if not a diagram file
-    """
-    return BaseParser.detect_file_type(file_path)
-
-
-def parse_diagram_file(file_path: Union[str, Path]) -> Tuple[Dict[str, Any], BaseParser]:
-    """
-    Parse a diagram file and return the diagram data and parser instance.
-
+    Detect the type of a diagram file based on its extension or content.
+    
     Args:
         file_path: Path to the diagram file
-
+        
     Returns:
-        A tuple containing the diagram data and the parser instance
+        str: Type of diagram ('mermaid')
+        
+    Raises:
+        ValueError: If the file type cannot be determined
     """
-    file_path = Path(file_path)
+    path = Path(file_path)
     
-    if not file_path.exists():
-        raise FileNotFoundError(f"File not found: {file_path}")
+    # Check by extension
+    if path.suffix.lower() == '.mmd':
+        return 'mermaid'
     
-    diagram_type = detect_diagram_file_type(file_path)
-    
-    if diagram_type == 'mermaid':
-        parser = MermaidParser.from_file(file_path)
-        data = parser.parse()
-        return data, parser
-    elif diagram_type == 'plantuml':
-        parser = PlantUMLParser.from_file(file_path)
-        data = parser.parse()
-        return data, parser
-    else:
-        raise ValueError(f"Unsupported diagram file type: {file_path}")
+    # Check by content
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+            
+            # Check for Mermaid patterns
+            if any(keyword in content.lower() for keyword in 
+                   ['graph ', 'flowchart ', 'sequencediagram', 'classDiagram', 'erDiagram']):
+                return 'mermaid'
+    except Exception as e:
+        pass
+        
+    raise ValueError(f"Cannot determine diagram type for file: {file_path}")
 
-
-def generate_diagram_from_file(
-    file_path: Union[str, Path],
-    output_path: Optional[Union[str, Path]] = None,
-    output_format: str = 'svg',
-    dark_mode: bool = False,
-    inline_resources: bool = False
-) -> str:
+def is_diagram_file(file_path: str) -> bool:
     """
-    Generate a diagram from a Mermaid or PlantUML file.
+    Check if a file is a supported diagram file.
+    
+    Args:
+        file_path: Path to the file to check
+        
+    Returns:
+        bool: True if the file is a supported diagram file, False otherwise
+    """
+    try:
+        detect_diagram_file_type(file_path)
+        return True
+    except ValueError:
+        return False
 
+def parse_diagram_file(file_path: str) -> Dict[str, Any]:
+    """
+    Parse a diagram file and return its contents.
+    
     Args:
         file_path: Path to the diagram file
-        output_path: Path where to save the generated diagram (if None, it will use the input filename with appropriate extension)
-        output_format: Output format ('svg', 'png', 'html', 'pdf')
-        dark_mode: Whether to use dark mode for HTML output
-        inline_resources: Whether to inline CSS and JS resources in HTML (avoids CORS issues)
-
+        
     Returns:
-        Path to the generated diagram file
+        Dict[str, Any]: Dictionary with diagram data
     """
-    file_path = Path(file_path)
-    
-    if not output_path:
-        # Create output path based on input filename
-        output_path = file_path.with_suffix(f'.{output_format}')
-    else:
-        output_path = Path(output_path)
-    
     diagram_type = detect_diagram_file_type(file_path)
     
-    if not diagram_type:
-        raise ValueError(f"Could not determine diagram type for file: {file_path}")
-    
-    # Get diagram data from file
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    # Try to use parsers if available
-    try:
-        data, parser = parse_diagram_file(file_path)
-        # Add raw content to data
-        data['raw_content'] = content
-        # Add title if not present
-        if 'title' not in data:
-            data['title'] = file_path.stem
-    except (ImportError, ModuleNotFoundError):
-        # If parsers aren't available, create a simple data dictionary
-        data = {
-            'type': diagram_type,
-            'raw_content': content,
-            'title': file_path.stem
-        }
-        parser = None
+    # Create a basic diagram data structure
+    diagram_data = {
+        'type': diagram_type,
+        'raw_content': content,
+        'title': Path(file_path).stem
+    }
+    
+    return diagram_data
+
+def generate_diagram_from_file(
+    file_path: str, 
+    output_path: Optional[str] = None, 
+    output_format: str = 'svg',
+    theme: Optional[str] = None,
+    dark_mode: bool = False,
+    inline_resources: bool = True
+) -> str:
+    """
+    Generate a diagram from a file.
+    
+    Args:
+        file_path: Path to the diagram file
+        output_path: Path to save the output (if None, uses the same name as input file)
+        output_format: Output format ('svg', 'png', 'html')
+        theme: Theme to use for the diagram (HTML output only)
+        dark_mode: Whether to use dark mode (HTML output only)
+        inline_resources: Whether to inline resources in HTML output
         
-    # Check which renderer to use based on output format
-    if output_format.lower() == 'html':
+    Returns:
+        str: Path to the generated diagram
+    """
+    # Parse the diagram file to get its contents and type
+    diagram_data = parse_diagram_file(file_path)
+    
+    # Determine output path if not provided
+    if output_path is None:
+        input_path = Path(file_path)
+        output_path = str(input_path.with_suffix(f'.{output_format}'))
+    
+    # Handle different output formats
+    if output_format == 'html':
+        # Import HTML renderer
         from pydiagrams.renderers.html_renderer import HTMLRenderer
         
-        # Create an HTML renderer with dark mode option
-        renderer = HTMLRenderer(dark_mode=dark_mode, inline_resources=inline_resources)
+        # Create renderer with options
+        renderer = HTMLRenderer(
+            width=800, 
+            height=600, 
+            interactive=True,
+            dark_mode=dark_mode,
+            inline_resources=inline_resources
+        )
+        
+        # If a theme is specified, add it to the diagram data
+        if theme:
+            diagram_data['theme'] = theme
         
         # Render the diagram to HTML
-        return renderer.render(data, str(output_path))
-    elif diagram_type == 'mermaid':
-        if output_format.lower() == 'svg':
-            from pydiagrams.renderers.mermaid_renderer import MermaidRenderer
-            renderer = MermaidRenderer()
-            return renderer.render(data, str(output_path))
-        elif output_format.lower() == 'png':
-            from pydiagrams.renderers.mermaid_renderer import MermaidRenderer
-            renderer = MermaidRenderer()
-            return renderer.render_png(data, str(output_path))
-        else:
-            raise ValueError(f"Unsupported output format for Mermaid: {output_format}")
-    elif diagram_type == 'plantuml':
-        if parser and hasattr(parser, f'generate_{output_format.lower()}'):
-            # Use the parser's generation methods if available
-            generate_method = getattr(parser, f'generate_{output_format.lower()}')
-            return generate_method(str(output_path))
-        else:
-            # Use our PlantUML renderer
-            if output_format.lower() == 'svg':
-                from pydiagrams.renderers.plantuml_renderer import PlantUMLRenderer
-                renderer = PlantUMLRenderer()
-                return renderer.render(data, str(output_path))
-            elif output_format.lower() == 'png':
-                from pydiagrams.renderers.plantuml_renderer import PlantUMLRenderer
-                renderer = PlantUMLRenderer()
-                return renderer.render_png(data, str(output_path))
-            else:
-                raise ValueError(f"Unsupported output format for PlantUML: {output_format}")
+        output_path = renderer.render(diagram_data, output_path)
     else:
-        raise ValueError(f"Unsupported diagram file type: {file_path}")
-        
-    return str(output_path)
-
-
-def is_diagram_file(file_path: Union[str, Path]) -> bool:
-    """
-    Check if a file is a diagram file (Mermaid or PlantUML).
-
-    Args:
-        file_path: Path to the file to check
-
-    Returns:
-        True if the file is a diagram file, False otherwise
-    """
-    return detect_diagram_file_type(file_path) is not None 
+        # For other formats, we need to implement rendering logic
+        # Currently we'll just use Mermaid renderer
+        try:
+            from pydiagrams.renderers.mermaid_renderer import MermaidRenderer
+            renderer = MermaidRenderer()
+            output_path = renderer.render(diagram_data, output_path, output_format=output_format)
+        except ImportError:
+            try:
+                # Fallback to a basic file copy for now
+                # This should be replaced with actual rendering logic
+                from shutil import copyfile
+                copyfile(file_path, output_path)
+                print(f"Warning: SVG/PNG rendering not implemented yet. Copied file to {output_path}")
+            except Exception as e:
+                print(f"Error creating {output_format} output: {e}")
+                # Just return the file_path as-is
+                return output_path
+    
+    return output_path 

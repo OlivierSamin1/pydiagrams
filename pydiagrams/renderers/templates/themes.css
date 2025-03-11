@@ -1,0 +1,119 @@
+/* Theme CSS for Mermaid diagrams */
+
+/* Theme Colors */
+:root {
+    /* Default theme */
+    --default-primary: #333333;
+    --default-secondary: #666666;
+    --default-tertiary: #999999;
+    --default-background: #ffffff;
+    --default-lineColor: #333333;
+    --default-textColor: #333333;
+    --default-mainBkg: #edf2fa;
+    --default-nodeBorder: #ccc;
+    
+    /* Forest theme */
+    --forest-primary: #1f3a3d;
+    --forest-secondary: #2a4c3e;
+    --forest-tertiary: #3b6b58;
+    --forest-background: #f8f9fa;
+    --forest-lineColor: #2a4c3e;
+    --forest-textColor: #1f3a3d;
+    --forest-mainBkg: #dfe8dc;
+    --forest-nodeBorder: #7a938b;
+    
+    /* Dark theme */
+    --dark-primary: #efefef;
+    --dark-secondary: #ababab;
+    --dark-tertiary: #878787;
+    --dark-background: #2b2b2b;
+    --dark-lineColor: #d3d3d3;
+    --dark-textColor: #efefef;
+    --dark-mainBkg: #1f1f1f;
+    --dark-nodeBorder: #444;
+    
+    /* Neutral theme */
+    --neutral-primary: #4f546b;
+    --neutral-secondary: #64748b;
+    --neutral-tertiary: #94a3b8;
+    --neutral-background: #f1f5f9;
+    --neutral-lineColor: #64748b;
+    --neutral-textColor: #374151;
+    --neutral-mainBkg: #e2e8f0;
+    --neutral-nodeBorder: #94a3b8;
+    
+    /* Blue theme */
+    --blue-primary: #0c4a6e;
+    --blue-secondary: #0369a1;
+    --blue-tertiary: #0284c7;
+    --blue-background: #f0f9ff;
+    --blue-lineColor: #0284c7;
+    --blue-textColor: #0c4a6e;
+    --blue-mainBkg: #e0f2fe;
+    --blue-nodeBorder: #7dd3fc;
+    
+    /* High contrast theme */
+    --high-contrast-primary: #000000;
+    --high-contrast-secondary: #333333;
+    --high-contrast-tertiary: #666666;
+    --high-contrast-background: #ffffff;
+    --high-contrast-lineColor: #000000;
+    --high-contrast-textColor: #000000;
+    --high-contrast-mainBkg: #ffffff;
+    --high-contrast-nodeBorder: #000000;
+}
+
+/* Dark mode overrides */
+.dark-mode {
+    /* Default theme in dark mode */
+    --default-primary: #e0e0e0;
+    --default-secondary: #b0b0b0;
+    --default-tertiary: #808080;
+    --default-background: #1e1e1e;
+    --default-lineColor: #d0d0d0;
+    --default-textColor: #e0e0e0;
+    --default-mainBkg: #2d2d2d;
+    --default-nodeBorder: #606060;
+    
+    /* Forest theme in dark mode */
+    --forest-primary: #a9d5bc;
+    --forest-secondary: #7fbf9e;
+    --forest-tertiary: #50967a;
+    --forest-background: #1e2a20;
+    --forest-lineColor: #a9d5bc;
+    --forest-textColor: #d1e6d9;
+    --forest-mainBkg: #263d2a;
+    --forest-nodeBorder: #5d7d6a;
+    
+    /* Dark theme in dark mode - already dark */
+    
+    /* Neutral theme in dark mode */
+    --neutral-primary: #cbd5e1;
+    --neutral-secondary: #94a3b8;
+    --neutral-tertiary: #64748b;
+    --neutral-background: #1e293b;
+    --neutral-lineColor: #cbd5e1;
+    --neutral-textColor: #e2e8f0;
+    --neutral-mainBkg: #334155;
+    --neutral-nodeBorder: #64748b;
+    
+    /* Blue theme in dark mode */
+    --blue-primary: #bae6fd;
+    --blue-secondary: #7dd3fc;
+    --blue-tertiary: #38bdf8;
+    --blue-background: #082f49;
+    --blue-lineColor: #bae6fd;
+    --blue-textColor: #e0f2fe;
+    --blue-mainBkg: #0c4a6e;
+    --blue-nodeBorder: #0284c7;
+    
+    /* High contrast theme in dark mode */
+    --high-contrast-primary: #ffffff;
+    --high-contrast-secondary: #e0e0e0;
+    --high-contrast-tertiary: #a0a0a0;
+    --high-contrast-background: #000000;
+    --high-contrast-lineColor: #ffffff;
+    --high-contrast-textColor: #ffffff;
+    --high-contrast-mainBkg: #000000;
+    --high-contrast-nodeBorder: #ffffff;
+} 
