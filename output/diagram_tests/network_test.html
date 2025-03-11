@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Request Test</title>
+    
+    <!-- Load our resources from relative path -->
+    <link rel="stylesheet" href="static/css/themes.css">
+    <script src="static/js/themes.js"></script>
+    
+    <!-- Load Mermaid from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <script>
+        console.log("=== NETWORK REQUEST TEST ===");
+        
+        // Log all network requests
+        const originalFetch = window.fetch;
+        window.fetch = function() {
+            console.log("Fetch request:", arguments[0]);
+            return originalFetch.apply(this, arguments);
+        }
+        
+        // Initialize Mermaid
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Initializing Mermaid...");
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'default'
+            });
+            
+            // Check if resources are loaded
+            setTimeout(function() {
+                const themesLoaded = document.querySelector('link[href="static/css/themes.css"]');
+                console.log("themes.css loaded:", themesLoaded !== null);
+                
+                const themeJsLoaded = document.querySelector('script[src="static/js/themes.js"]');
+                console.log("themes.js loaded:", themeJsLoaded !== null);
+                
+                const mermaidLoaded = document.querySelector('script[src*="mermaid"]');
+                console.log("mermaid.js loaded:", mermaidLoaded !== null);
+                
+                // Check computed styles to see if CSS is applied
+                const body = document.body;
+                const styles = window.getComputedStyle(body);
+                console.log("Body background color:", styles.backgroundColor);
+                console.log("Body font family:", styles.fontFamily);
+            }, 1000);
+        });
+    </script>
+</head>
+<body>
+    <h1>Network Request Test</h1>
+    
+    <h2>Mermaid Diagram</h2>
+    <div class="mermaid">
+        graph TD
+        A[Client] --> B[Server]
+        B --> C[Database]
+    </div>
+    
+    <h2>Instructions</h2>
+    <ul>
+        <li>Open the browser Developer Tools (F12)</li>
+        <li>Go to the Network tab</li>
+        <li>Reload the page</li>
+        <li>Check which resources are loaded successfully and which are failing</li>
+    </ul>
+</body>
+</html>

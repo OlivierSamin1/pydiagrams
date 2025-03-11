@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlantUML Direct Test</title>
+    
+    <script>
+        console.log("=== PLANTUML DEBUG TEST ===");
+        
+        // Log when DOM content is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM content loaded");
+            const img = document.getElementById('plantuml-image');
+            console.log("PlantUML image element:", img);
+            
+            // Log when the image is loaded
+            img.onload = function() {
+                console.log("PlantUML image loaded successfully");
+                console.log("Image dimensions:", img.naturalWidth, "x", img.naturalHeight);
+            };
+            
+            // Log if the image fails to load
+            img.onerror = function() {
+                console.error("PlantUML image failed to load");
+            };
+        });
+    </script>
+</head>
+<body>
+    <h1>PlantUML Direct Test</h1>
+    
+    <h2>Direct Image from PlantUML Server</h2>
+    <img id="plantuml-image" src="http://www.plantuml.com/plantuml/png/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000" alt="PlantUML Diagram" />
+    
+    <h2>Information</h2>
+    <ul>
+        <li>This test uses a direct encoded PlantUML diagram</li>
+        <li>The image is loaded directly from the PlantUML server</li>
+        <li>Check the browser console (F12) for debugging information</li>
+    </ul>
+    
+    <h2>PlantUML Server Details</h2>
+    <ul>
+        <li>Server URL: http://www.plantuml.com/plantuml</li>
+        <li>Encoded diagram: SyfFKj2rKt3CoKnELR1Io4ZDoSa70000</li>
+        <li>Full image URL: <a href="http://www.plantuml.com/plantuml/png/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000">http://www.plantuml.com/plantuml/png/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000</a></li>
+    </ul>
+</body>
+</html>

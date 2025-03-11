@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+  <foreignObject width="100%" height="100%">
+    <div xmlns="http://www.w3.org/1999/xhtml">
+      <pre class="mermaid">
+classDiagram
+    class Customer {
+        +String name
+        +String email
+        +String phone
+        +register()
+        +login()
+        +updateProfile()
+    }
+    
+    class Order {
+        +Integer orderId
+        +Date orderDate
+        +Float totalAmount
+        +String status
+        +placeOrder()
+        +cancelOrder()
+        +processPayment()
+    }
+    
+    class Product {
+        +Integer productId
+        +String name
+        +String description
+        +Float price
+        +Integer inventory
+        +addToCart()
+        +updateInventory()
+    }
+    
+    class ShoppingCart {
+        +Integer cartId
+        +Integer quantity
+        +Float totalPrice
+        +addItem()
+        +removeItem()
+        +updateQuantity()
+        +checkout()
+    }
+    
+    Customer "1" --> "*" Order : places
+    Customer "1" --> "1" ShoppingCart : has
+    ShoppingCart "*" --> "*" Product : contains 
+      </pre>
+      <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+      <script>mermaid.initialize({startOnLoad:true});</script>
+    </div>
+  </foreignObject>
+</svg>

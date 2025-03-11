@@ -2,305 +2,357 @@
 
 {% block styles %}
 <style>
-    .plantuml-container {
-        max-width: 100%;
-        max-height: 100%;
-        overflow: auto;
-    }
-    
-    .plantuml-image {
-        max-width: 100%;
-        height: auto;
-    }
-    
-    .plantuml-source {
-        display: none;
+    .mermaid {
         font-family: 'Courier New', Courier, monospace;
-        font-size: 14px;
-        padding: 15px;
-        background-color: var(--node-bg-color);
-        border: 1px solid var(--node-border-color);
-        border-radius: 5px;
-        white-space: pre-wrap;
-        margin-top: 20px;
-    }
-    
-    .source-toggle {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        z-index: 1000;
+        font-size: 16px;
+        line-height: 1.5;
     }
 </style>
 {% endblock %}
 
 {% block libraries %}
-<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
-{% endblock %}
-
-{% block diagram %}
-<button id="source-toggle" class="source-toggle">Show Source</button>
-<div class="plantuml-container">
-    <img src="{{ diagram_image_url }}" alt="PlantUML Diagram" class="plantuml-image" id="plantuml-image">
-    <pre id="plantuml-source" class="plantuml-source">{{ diagram_content | escape }}</pre>
-</div>
-{% endblock %}
-
-{% block scripts %}
+{% if use_mermaid_umd %}
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <script>
-    // PlantUML Server URL for image generation
-    const PLANTUML_SERVER = "{{ plantuml_server }}";
-    
-    // Toggle source display
-    const sourceToggle = document.getElementById('source-toggle');
-    const sourceDisplay = document.getElementById('plantuml-source');
-    
-    sourceToggle.addEventListener('click', function() {
-        const isVisible = sourceDisplay.style.display === 'block';
-        sourceDisplay.style.display = isVisible ? 'none' : 'block';
-        sourceToggle.textContent = isVisible ? 'Show Source' : 'Hide Source';
-    });
-    
-    // Theme changes for PlantUML
-    document.addEventListener('themeChanged', function(e) {
-        // Update the image URL to use the corresponding theme
-        updateDiagramWithTheme(e.detail.darkMode);
-    });
-    
-    function updateDiagramWithTheme(isDarkMode) {
-        const plantumlImage = document.getElementById('plantuml-image');
-        // Parse the current URL and update its parameters
-        let currentUrl = new URL(plantumlImage.src);
+    document.addEventListener('DOMContentLoaded', function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: document.body.classList.contains('dark-mode') ? 'dark' : 'default',
+            securityLevel: 'loose',
+            fontFamily: '"Courier New", Courier, monospace',
+        });
         
-        // If the URL contains the PlantUML server, update the theme
-        if (currentUrl.origin.includes('plantuml')) {
-            let encodedData = currentUrl.pathname.split('/').pop();
-            // Generate a new URL with theme parameter
-            let theme = isDarkMode ? 'dark' : 'light';
-            let newUrl = `${PLANTUML_SERVER}/svg/${encodedData}?theme=${theme}`;
-            plantumlImage.src = newUrl;
-        }
-    }
+        // Update theme when it changes
+        document.addEventListener('themeChanged', function(e) {
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: e.detail.darkMode ? 'dark' : 'default',
+            });
+            
+            // Re-render the diagram
+            const container = document.querySelector("#diagram");
+            container.innerHTML = `<div class="mermaid">${mermaidSource}</div>`;
+            mermaid.init(undefined, '.mermaid');
+        });
+        
+        // Store the original source for re-rendering
+        const mermaidSource = `{{ diagram_content | safe }}`;
+    });
     
     // Export functionality
     window.exportDiagramSVG = function(filename, quality) {
-        // For PlantUML, just download the current SVG
-        const plantumlImage = document.getElementById('plantuml-image');
-        
-        if (plantumlImage.src.endsWith('.svg') || plantumlImage.src.includes('/svg/')) {
-            // It's already an SVG, just download it
-            fetch(plantumlImage.src)
-                .then(response => response.text())
-                .then(svgContent => {
-                    const blob = new Blob([svgContent], {type: 'image/svg+xml'});
-                    const url = URL.createObjectURL(blob);
-                    
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${filename}.svg`;
-                    document.body.appendChild(a);
-                    a.click();
-                    
-                    // Clean up
-                    setTimeout(() => {
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                    }, 100);
-                })
-                .catch(error => {
-                    console.error('Error downloading SVG:', error);
-                    alert('Error downloading SVG: ' + error.message);
-                });
-        } else {
-            // Convert the image to SVG first
-            // Replace the URL to get SVG instead
-            let svgUrl = plantumlImage.src.replace('/png/', '/svg/');
-            
-            fetch(svgUrl)
-                .then(response => response.text())
-                .then(svgContent => {
-                    const blob = new Blob([svgContent], {type: 'image/svg+xml'});
-                    const url = URL.createObjectURL(blob);
-                    
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${filename}.svg`;
-                    document.body.appendChild(a);
-                    a.click();
-                    
-                    // Clean up
-                    setTimeout(() => {
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                    }, 100);
-                })
-                .catch(error => {
-                    console.error('Error downloading SVG:', error);
-                    alert('Error downloading SVG: ' + error.message);
-                });
+        const svgElement = document.querySelector('.mermaid svg');
+        if (!svgElement) {
+            alert('No SVG element found to export');
+            return;
         }
+        
+        // Clone the SVG to avoid modifying the displayed one
+        const svgClone = svgElement.cloneNode(true);
+        
+        // Set explicit dimensions if needed
+        svgClone.setAttribute('width', svgElement.clientWidth);
+        svgClone.setAttribute('height', svgElement.clientHeight);
+        
+        // Create a blob and download link
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const blob = new Blob([svgData], {type: 'image/svg+xml'});
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${filename}.svg`;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
     };
     
     window.exportDiagramPNG = function(filename, quality) {
-        const container = document.querySelector('.plantuml-container');
-        const sourceDisplay = document.getElementById('plantuml-source');
-        const sourceToggle = document.getElementById('source-toggle');
-        
-        // Temporarily hide source code if shown
-        const wasSourceVisible = sourceDisplay.style.display === 'block';
-        sourceDisplay.style.display = 'none';
-        sourceToggle.style.display = 'none';
-        
-        // Get the PlantUML image
-        const plantumlImage = document.getElementById('plantuml-image');
-        
-        // If we're using the PlantUML server, we can get a high-quality PNG directly
-        if (plantumlImage.src.includes(PLANTUML_SERVER)) {
-            // Get the encoded data from the URL
-            let encodedData = plantumlImage.src.split('/').pop().split('?')[0];
-            
-            // Generate a PNG URL with the desired quality
-            let pngUrl = `${PLANTUML_SERVER}/png/${encodedData}`;
-            
-            // Add scale parameter for higher quality if needed
-            if (quality > 1) {
-                pngUrl += `?scale=${Math.round(quality * 2)}`;
-            }
-            
-            // Download the PNG
-            fetch(pngUrl)
-                .then(response => response.blob())
-                .then(blob => {
-                    const url = URL.createObjectURL(blob);
-                    
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${filename}.png`;
-                    document.body.appendChild(a);
-                    a.click();
-                    
-                    // Clean up and restore
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
-                    sourceToggle.style.display = 'block';
-                })
-                .catch(error => {
-                    console.error('Error downloading PNG:', error);
-                    alert('Error downloading PNG: ' + error.message);
-                    
-                    // Restore display state
-                    sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
-                    sourceToggle.style.display = 'block';
-                });
-        } else {
-            // Use html-to-image as a fallback
-            htmlToImage.toPng(container, { 
-                quality: 1.0, 
-                pixelRatio: quality * 2,
-                backgroundColor: document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#ffffff'
-            })
-                .then(function (dataUrl) {
-                    const a = document.createElement('a');
-                    a.href = dataUrl;
-                    a.download = `${filename}.png`;
-                    document.body.appendChild(a);
-                    a.click();
-                    
-                    // Clean up and restore
-                    document.body.removeChild(a);
-                    sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
-                    sourceToggle.style.display = 'block';
-                })
-                .catch(function (error) {
-                    console.error('Error generating PNG:', error);
-                    alert('Error generating PNG: ' + error.message);
-                    
-                    // Restore display state
-                    sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
-                    sourceToggle.style.display = 'block';
-                });
+        const svgElement = document.querySelector('.mermaid svg');
+        if (!svgElement) {
+            alert('No SVG element found to export');
+            return;
         }
+        
+        // Clone the SVG to avoid modifying the displayed one
+        const svgClone = svgElement.cloneNode(true);
+        
+        // Set explicit dimensions for better quality
+        const width = svgElement.clientWidth;
+        const height = svgElement.clientHeight;
+        svgClone.setAttribute('width', width);
+        svgClone.setAttribute('height', height);
+        
+        // Create a canvas for PNG rendering
+        const canvas = document.createElement('canvas');
+        canvas.width = width * quality * 2; // Higher resolution
+        canvas.height = height * quality * 2;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(quality * 2, quality * 2); // Scale for higher quality
+        
+        // Convert SVG to a data URL
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const svg64 = btoa(unescape(encodeURIComponent(svgData)));
+        const img = new Image();
+        
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0);
+            
+            // Create a download link for the PNG
+            const a = document.createElement('a');
+            a.href = canvas.toDataURL('image/png');
+            a.download = `${filename}.png`;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Clean up
+            document.body.removeChild(a);
+        };
+        
+        img.src = `data:image/svg+xml;base64,${svg64}`;
     };
     
     window.exportDiagramPDF = function(filename, quality) {
-        const container = document.querySelector('.plantuml-container');
-        const sourceDisplay = document.getElementById('plantuml-source');
-        const sourceToggle = document.getElementById('source-toggle');
+        const svgElement = document.querySelector('.mermaid svg');
+        if (!svgElement) {
+            alert('No SVG element found to export');
+            return;
+        }
         
-        // Temporarily hide source code if shown
-        const wasSourceVisible = sourceDisplay.style.display === 'block';
-        sourceDisplay.style.display = 'none';
-        sourceToggle.style.display = 'none';
+        // Clone the SVG to avoid modifying the displayed one
+        const svgClone = svgElement.cloneNode(true);
         
-        try {
-            const { jsPDF } = window.jspdf;
-            const plantumlImage = document.getElementById('plantuml-image');
+        // Set explicit dimensions for better quality
+        const width = svgElement.clientWidth;
+        const height = svgElement.clientHeight;
+        svgClone.setAttribute('width', width);
+        svgClone.setAttribute('height', height);
+        
+        // Create a canvas for PDF rendering
+        const canvas = document.createElement('canvas');
+        canvas.width = width * quality * 2; // Higher resolution
+        canvas.height = height * quality * 2;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(quality * 2, quality * 2); // Scale for higher quality
+        
+        // Set background color based on theme
+        ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        
+        // Convert SVG to a data URL
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const svg64 = btoa(unescape(encodeURIComponent(svgData)));
+        const img = new Image();
+        
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0);
             
-            // Create a canvas to draw the image
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Create an image to load the PlantUML diagram
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
-            
-            img.onload = function() {
-                // Set canvas size to match the image
-                canvas.width = img.width * quality;
-                canvas.height = img.height * quality;
-                
-                // Fill with background color
-                ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#ffffff';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw the image
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            try {
+                const { jsPDF } = window.jspdf;
                 
                 // Create PDF with appropriate orientation
                 const pdf = new jsPDF({
-                    orientation: img.width > img.height ? 'landscape' : 'portrait',
+                    orientation: width > height ? 'landscape' : 'portrait',
                     unit: 'mm'
                 });
                 
                 // Calculate dimensions to fit the content in the PDF
                 const imgData = canvas.toDataURL('image/png');
                 const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (img.height / img.width) * pdfWidth;
+                const pdfHeight = (height / width) * pdfWidth;
                 
                 pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
                 pdf.save(`${filename}.pdf`);
-                
-                // Restore display state
-                sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
-                sourceToggle.style.display = 'block';
-            };
-            
-            // If we're using the PlantUML server, we can get a high-quality PNG directly
-            if (plantumlImage.src.includes(PLANTUML_SERVER)) {
-                // Get the encoded data from the URL
-                let encodedData = plantumlImage.src.split('/').pop().split('?')[0];
-                
-                // Generate a PNG URL with the desired quality
-                let pngUrl = `${PLANTUML_SERVER}/png/${encodedData}`;
-                
-                // Add scale parameter for higher quality if needed
-                if (quality > 1) {
-                    pngUrl += `?scale=${Math.round(quality * 2)}`;
-                }
-                
-                img.src = pngUrl;
-            } else {
-                img.src = plantumlImage.src;
+            } catch (error) {
+                console.error('Error creating PDF:', error);
+                alert('Error creating PDF: ' + error.message);
             }
-        } catch (error) {
-            console.error('Error creating PDF:', error);
-            alert('Error creating PDF: ' + error.message);
-            
-            // Restore display state
-            sourceDisplay.style.display = wasSourceVisible ? 'block' : 'none';
-            sourceToggle.style.display = 'block';
-        }
+        };
+        
+        img.src = `data:image/svg+xml;base64,${svg64}`;
     };
+</script>
+{% else %}
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: document.body.classList.contains('dark-mode') ? 'dark' : 'default',
+        securityLevel: 'loose',
+        fontFamily: '"Courier New", Courier, monospace',
+    });
+    
+    // Update theme when it changes
+    document.addEventListener('themeChanged', function(e) {
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: e.detail.darkMode ? 'dark' : 'default',
+        });
+        
+        // Re-render the diagram
+        const container = document.querySelector("#diagram");
+        container.innerHTML = `<div class="mermaid">${mermaidSource}</div>`;
+        mermaid.init(undefined, '.mermaid');
+    });
+    
+    // Store the original source for re-rendering
+    const mermaidSource = `{{ diagram_content | safe }}`;
+    
+    // Export functionality
+    window.exportDiagramSVG = function(filename, quality) {
+        const svgElement = document.querySelector('.mermaid svg');
+        if (!svgElement) {
+            alert('No SVG element found to export');
+            return;
+        }
+        
+        // Clone the SVG to avoid modifying the displayed one
+        const svgClone = svgElement.cloneNode(true);
+        
+        // Set explicit dimensions if needed
+        svgClone.setAttribute('width', svgElement.clientWidth);
+        svgClone.setAttribute('height', svgElement.clientHeight);
+        
+        // Create a blob and download link
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const blob = new Blob([svgData], {type: 'image/svg+xml'});
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${filename}.svg`;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+    };
+    
+    window.exportDiagramPNG = function(filename, quality) {
+        const svgElement = document.querySelector('.mermaid svg');
+        if (!svgElement) {
+            alert('No SVG element found to export');
+            return;
+        }
+        
+        // Clone the SVG to avoid modifying the displayed one
+        const svgClone = svgElement.cloneNode(true);
+        
+        // Set explicit dimensions for better quality
+        const width = svgElement.clientWidth;
+        const height = svgElement.clientHeight;
+        svgClone.setAttribute('width', width);
+        svgClone.setAttribute('height', height);
+        
+        // Create a canvas for PNG rendering
+        const canvas = document.createElement('canvas');
+        canvas.width = width * quality * 2; // Higher resolution
+        canvas.height = height * quality * 2;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(quality * 2, quality * 2); // Scale for higher quality
+        
+        // Convert SVG to a data URL
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const svg64 = btoa(unescape(encodeURIComponent(svgData)));
+        const img = new Image();
+        
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0);
+            
+            // Create a download link for the PNG
+            const a = document.createElement('a');
+            a.href = canvas.toDataURL('image/png');
+            a.download = `${filename}.png`;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Clean up
+            document.body.removeChild(a);
+        };
+        
+        img.src = `data:image/svg+xml;base64,${svg64}`;
+    };
+    
+    window.exportDiagramPDF = function(filename, quality) {
+        const svgElement = document.querySelector('.mermaid svg');
+        if (!svgElement) {
+            alert('No SVG element found to export');
+            return;
+        }
+        
+        // Clone the SVG to avoid modifying the displayed one
+        const svgClone = svgElement.cloneNode(true);
+        
+        // Set explicit dimensions for better quality
+        const width = svgElement.clientWidth;
+        const height = svgElement.clientHeight;
+        svgClone.setAttribute('width', width);
+        svgClone.setAttribute('height', height);
+        
+        // Create a canvas for PDF rendering
+        const canvas = document.createElement('canvas');
+        canvas.width = width * quality * 2; // Higher resolution
+        canvas.height = height * quality * 2;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(quality * 2, quality * 2); // Scale for higher quality
+        
+        // Set background color based on theme
+        ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        
+        // Convert SVG to a data URL
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const svg64 = btoa(unescape(encodeURIComponent(svgData)));
+        const img = new Image();
+        
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0);
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                
+                // Create PDF with appropriate orientation
+                const pdf = new jsPDF({
+                    orientation: width > height ? 'landscape' : 'portrait',
+                    unit: 'mm'
+                });
+                
+                // Calculate dimensions to fit the content in the PDF
+                const imgData = canvas.toDataURL('image/png');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (height / width) * pdfWidth;
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(`${filename}.pdf`);
+            } catch (error) {
+                console.error('Error creating PDF:', error);
+                alert('Error creating PDF: ' + error.message);
+            }
+        };
+        
+        img.src = `data:image/svg+xml;base64,${svg64}`;
+    };
+</script>
+{% endif %}
+{% endblock %}
+
+{% block diagram %}
+<div class="mermaid">
+{{ mermaid_content | safe }}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Additional Mermaid-specific functionality can go here
 </script>
 {% endblock %} 

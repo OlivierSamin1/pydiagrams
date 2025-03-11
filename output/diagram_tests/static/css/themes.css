@@ -1,0 +1,283 @@
+/* 
+ * PyDiagrams Theme System
+ * This file contains theme definitions for PyDiagrams HTML output
+ */
+
+/* Base theme variables */
+:root {
+    /* Light theme (default) */
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --primary-color: #4a86e8;
+    --secondary-color: #6aa84f;
+    --accent-color: #e69138;
+    --border-color: #cccccc;
+    --node-bg-color: #f3f3f3;
+    --node-border-color: #d9d9d9;
+    --relationship-color: #666666;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --hover-color: rgba(74, 134, 232, 0.1);
+    --modal-bg-color: rgba(0, 0, 0, 0.5);
+    --code-bg-color: #f5f5f5;
+    --code-text-color: #333333;
+    
+    /* Font settings */
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    --code-font-family: 'Courier New', Courier, monospace;
+    --base-font-size: 14px;
+    --heading-font-size: 18px;
+    --small-font-size: 12px;
+    
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    
+    /* Border radius */
+    --border-radius-sm: 4px;
+    --border-radius-md: 6px;
+    --border-radius-lg: 8px;
+    
+    /* Transitions */
+    --transition-speed: 0.3s;
+}
+
+/* Dark theme */
+body.dark-mode {
+    --bg-color: #1e1e1e;
+    --text-color: #e0e0e0;
+    --primary-color: #3a76d8;
+    --secondary-color: #5a9840;
+    --accent-color: #d18726;
+    --border-color: #444444;
+    --node-bg-color: #2d2d2d;
+    --node-border-color: #3a3a3a;
+    --relationship-color: #999999;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --hover-color: rgba(58, 118, 216, 0.2);
+    --modal-bg-color: rgba(0, 0, 0, 0.7);
+    --code-bg-color: #2a2a2a;
+    --code-text-color: #e0e0e0;
+}
+
+/* Base element styling */
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    font-size: var(--base-font-size);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    font-size: var(--base-font-size);
+    transition: background-color var(--transition-speed);
+}
+
+button:hover {
+    background-color: color-mix(in srgb, var(--primary-color) 90%, black);
+}
+
+button.secondary {
+    background-color: var(--secondary-color);
+}
+
+button.secondary:hover {
+    background-color: color-mix(in srgb, var(--secondary-color) 90%, black);
+}
+
+button.accent {
+    background-color: var(--accent-color);
+}
+
+button.accent:hover {
+    background-color: color-mix(in srgb, var(--accent-color) 90%, black);
+}
+
+/* Diagram container */
+#diagram-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+#diagram {
+    transition: transform var(--transition-speed) ease;
+    transform-origin: center center;
+}
+
+/* Controls */
+#controls {
+    position: fixed;
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    z-index: 1000;
+}
+
+.control-group {
+    display: flex;
+    gap: var(--spacing-xs);
+    background-color: color-mix(in srgb, var(--bg-color) 80%, transparent);
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
+    box-shadow: 0 2px 5px var(--shadow-color);
+}
+
+/* Theme selector */
+#theme-controls {
+    position: fixed;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal styling */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--modal-bg-color);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background-color: var(--bg-color);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 5px 15px var(--shadow-color);
+    width: 90%;
+    max-width: 500px;
+}
+
+.modal-title {
+    margin-top: 0;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+}
+
+.modal-close {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-md);
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.export-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.export-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.export-inputs {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.export-inputs input {
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--base-font-size);
+    flex: 1;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* Progress indicator */
+#progress-indicator {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--modal-bg-color);
+    z-index: 3000;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--border-color);
+    border-top: 5px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+pre, code {
+    font-family: var(--code-font-family);
+    background-color: var(--code-bg-color);
+    color: var(--code-text-color);
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
+}
+
+@media (max-width: 768px) {
+    :root {
+        --spacing-lg: 16px;
+        --spacing-md: 12px;
+        --spacing-sm: 6px;
+        --spacing-xs: 3px;
+    }
+    
+    #controls {
+        bottom: var(--spacing-md);
+        right: var(--spacing-md);
+    }
+    
+    #theme-controls {
+        top: var(--spacing-md);
+        right: var(--spacing-md);
+    }
+    
+    .modal-content {
+        padding: var(--spacing-md);
+        width: 95%;
+    }
+} 

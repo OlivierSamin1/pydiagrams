@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mermaid Class Diagram</title>
+    
+    <!-- Theme system -->
+    <link rel="stylesheet" href="accessibility_example_files/css/themes.css">
+    <script src="accessibility_example_files/js/themes.js"></script>
+    
+    <!-- Custom styles specific to diagram type -->
+    
+    
+    <!-- PDF Export Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Base scripts common to all diagrams -->
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            // Zoom controls
+            let scale = 1;
+            const diagram = document.getElementById('diagram');
+            
+            document.getElementById('zoom-in').addEventListener('click', function() {
+                scale *= 1.2;
+                updateScale();
+            });
+            
+            document.getElementById('zoom-out').addEventListener('click', function() {
+                scale /= 1.2;
+                updateScale();
+            });
+            
+            document.getElementById('reset-zoom').addEventListener('click', function() {
+                scale = 1;
+                updateScale();
+            });
+            
+            function updateScale() {
+                diagram.style.transform = `scale(${scale})`;
+            }
+            
+            // Pan controls
+            let isPanning = false;
+            let startX, startY;
+            let translateX = 0, translateY = 0;
+            
+            const container = document.getElementById('diagram-container');
+            
+            container.addEventListener('mousedown', function(e) {
+                // Only initiate pan if not clicking on a control
+                if (!e.target.closest('#controls') && !e.target.closest('#theme-controls')) {
+                    isPanning = true;
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
+                    container.style.cursor = 'grabbing';
+                }
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (isPanning) {
+                    translateX = e.clientX - startX;
+                    translateY = e.clientY - startY;
+                    diagram.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                }
+            });
+            
+            document.addEventListener('mouseup', function() {
+                isPanning = false;
+                container.style.cursor = 'default';
+            });
+            
+            // Export Modal
+            const exportButton = document.getElementById('export-button');
+            const exportModal = document.getElementById('export-modal');
+            const closeModal = document.getElementById('close-modal');
+            
+            exportButton.addEventListener('click', function() {
+                exportModal.style.display = 'flex';
+            });
+            
+            closeModal.addEventListener('click', function() {
+                exportModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            exportModal.addEventListener('click', function(e) {
+                if (e.target === exportModal) {
+                    exportModal.style.display = 'none';
+                }
+            });
+            
+            // Export options
+            document.getElementById('export-svg').addEventListener('click', function() {
+                exportModal.style.display = 'none';
+                const filename = document.getElementById('export-filename').value || 'Mermaid Class Diagram';
+                const quality = document.getElementById('export-quality').value || 1;
+                exportSVG(filename, parseFloat(quality));
+            });
+            
+            document.getElementById('export-png').addEventListener('click', function() {
+                exportModal.style.display = 'none';
+                const filename = document.getElementById('export-filename').value || 'Mermaid Class Diagram';
+                const quality = document.getElementById('export-quality').value || 1;
+                exportPNG(filename, parseFloat(quality));
+            });
+            
+            document.getElementById('export-pdf').addEventListener('click', function() {
+                exportModal.style.display = 'none';
+                const filename = document.getElementById('export-filename').value || 'Mermaid Class Diagram';
+                const quality = document.getElementById('export-quality').value || 1;
+                exportPDF(filename, parseFloat(quality));
+            });
+            
+            // Progress indicator
+            function showProgress(message) {
+                const progress = document.getElementById('progress-indicator');
+                const messageElem = document.getElementById('progress-message');
+                messageElem.textContent = message;
+                progress.style.display = 'flex';
+            }
+            
+            function hideProgress() {
+                const progress = document.getElementById('progress-indicator');
+                progress.style.display = 'none';
+            }
+            
+            // Export functions
+            function exportSVG(filename, quality) {
+                showProgress("Generating SVG...");
+                
+                if (typeof window.exportDiagramSVG === 'function') {
+                    try {
+                        window.exportDiagramSVG(filename, quality);
+                    } catch (error) {
+                        console.error('Error exporting SVG:', error);
+                        alert('Error exporting SVG: ' + error.message);
+                    } finally {
+                        hideProgress();
+                    }
+                } else {
+                    hideProgress();
+                    alert('SVG export is not available for this diagram type.');
+                }
+            }
+            
+            function exportPNG(filename, quality) {
+                showProgress("Generating PNG...");
+                
+                if (typeof window.exportDiagramPNG === 'function') {
+                    try {
+                        window.exportDiagramPNG(filename, quality);
+                    } catch (error) {
+                        console.error('Error exporting PNG:', error);
+                        alert('Error exporting PNG: ' + error.message);
+                    } finally {
+                        hideProgress();
+                    }
+                } else {
+                    hideProgress();
+                    alert('PNG export is not available for this diagram type.');
+                }
+            }
+            
+            function exportPDF(filename, quality) {
+                showProgress("Generating PDF...");
+                
+                if (typeof window.exportDiagramPDF === 'function') {
+                    try {
+                        window.exportDiagramPDF(filename, quality);
+                    } catch (error) {
+                        console.error('Error exporting PDF:', error);
+                        alert('Error exporting PDF: ' + error.message);
+                    } finally {
+                        hideProgress();
+                    }
+                } else {
+                    // Default PDF export implementation
+                    try {
+                        const { jsPDF } = window.jspdf;
+                        const diagramElement = document.getElementById('diagram');
+                        
+                        html2canvas(diagramElement, { 
+                            scale: quality * 2,  // Higher quality
+                            backgroundColor: document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#ffffff'
+                        }).then(canvas => {
+                            const imgData = canvas.toDataURL('image/png');
+                            const pdf = new jsPDF({
+                                orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
+                                unit: 'mm'
+                            });
+                            
+                            // Calculate dimensions to fit the content in the PDF
+                            const imgWidth = pdf.internal.pageSize.getWidth();
+                            const imgHeight = canvas.height * imgWidth / canvas.width;
+                            
+                            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                            pdf.save(`${filename}.pdf`);
+                            hideProgress();
+                        });
+                    } catch (error) {
+                        console.error('Error creating PDF:', error);
+                        alert('Error creating PDF: ' + error.message);
+                        hideProgress();
+                    }
+                }
+            }
+            
+            // Export the functions to global scope
+            window.showProgress = showProgress;
+            window.hideProgress = hideProgress;
+        });
+    </script>
+    
+    <!-- Diagram-specific JavaScript libraries -->
+    
+</head>
+<body class="theme-high-contrast ">
+    <div id="diagram-container">
+        <div id="diagram">
+            
+        </div>
+    </div>
+    
+    <div id="controls">
+        <div class="control-group">
+            <button id="zoom-in" title="Zoom In">+</button>
+            <button id="zoom-out" title="Zoom Out">-</button>
+            <button id="reset-zoom" title="Reset Zoom">Reset</button>
+        </div>
+        <div class="control-group">
+            <button id="export-button" class="secondary" title="Export Diagram">Export</button>
+        </div>
+    </div>
+    
+    <!-- Export Modal -->
+    <div id="export-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal" class="modal-close">&times;</span>
+            <h3 class="modal-title">Export Diagram</h3>
+            
+            <div class="export-inputs">
+                <input type="text" id="export-filename" placeholder="Filename (without extension)" value="Mermaid Class Diagram">
+                <input type="number" id="export-quality" placeholder="Quality (1-3)" value="2" min="1" max="3" step="0.5">
+            </div>
+            
+            <div class="export-options">
+                <div class="export-option">
+                    <span>SVG Vector Format</span>
+                    <button id="export-svg" class="secondary">Export SVG</button>
+                </div>
+                <div class="export-option">
+                    <span>PNG Image Format</span>
+                    <button id="export-png" class="secondary">Export PNG</button>
+                </div>
+                <div class="export-option">
+                    <span>PDF Document Format</span>
+                    <button id="export-pdf" class="secondary">Export PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Indicator -->
+    <div id="progress-indicator">
+        <div class="spinner"></div>
+        <div id="progress-message">Processing...</div>
+    </div>
+    
+    <!-- Diagram-specific scripts -->
+    
+</body>
+</html> 

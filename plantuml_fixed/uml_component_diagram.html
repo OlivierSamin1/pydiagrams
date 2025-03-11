@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlantUML Diagram</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #ffffff;
+            color: #333333;
+        }
+        
+        .dark-mode {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        
+        .dark-mode pre {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        img {
+            max-width: 100%;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: left;
+            overflow-x: auto;
+        }
+        
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        button {
+            padding: 8px 16px;
+            background-color: #4a86e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        
+        button:hover {
+            background-color: #3a76d8;
+        }
+        
+        .error-message {
+            color: #d32f2f;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #d32f2f;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        #rendering-options {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .rendering-option {
+            padding: 8px 16px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .rendering-option:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .dark-mode .rendering-option {
+            background-color: #2d2d2d;
+        }
+        
+        .dark-mode .rendering-option:hover {
+            background-color: #3d3d3d;
+        }
+        
+        .loading {
+            margin: 20px auto;
+            text-align: center;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try to display the diagram with fallbacks
+            tryLoadDiagram();
+            
+            // Toggle dark mode
+            const darkModeBtn = document.getElementById('dark-mode-btn');
+            if (darkModeBtn) {
+                darkModeBtn.addEventListener('click', function() {
+                    document.body.classList.toggle('dark-mode');
+                });
+            }
+        });
+        
+        function tryLoadDiagram() {
+            // First try the embedded SVG if it exists
+            const embeddedImg = document.getElementById('diagram-svg-embed');
+            let hasDisplayed = false;
+            
+            if (embeddedImg) {
+                embeddedImg.style.display = 'block';
+                embeddedImg.onerror = function() {
+                    this.style.display = 'none';
+                    tryServerImages();
+                };
+                embeddedImg.onload = function() {
+                    hasDisplayed = true;
+                };
+            } else {
+                tryServerImages();
+            }
+            
+            // Function to try all server images in sequence
+            function tryServerImages() {
+                for (let i = 0; i < 4; i++) {
+                    const img = document.getElementById(`diagram-svg-${i}`);
+                    if (img) {
+                        img.style.display = 'block';
+                        img.onerror = function() {
+                            this.style.display = 'none';
+                            // If this is the last image and none worked, show error
+                            if (i === 3 && !hasDisplayed) {
+                                showError();
+                            }
+                        };
+                        img.onload = function() {
+                            hasDisplayed = true;
+                        };
+                    }
+                }
+            }
+            
+            // Show error message if no images could be loaded
+            function showError() {
+                const errorDiv = document.getElementById('error-message');
+                if (errorDiv) {
+                    errorDiv.style.display = 'block';
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>PlantUML Diagram</h1>
+    <div class="container">
+        <!-- Embedded SVG (if available) -->
+        <img id="diagram-svg-embed" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkNMQVNTIiBoZWlnaHQ9IjI5NnB4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6NzkxcHg7aGVpZ2h0OjI5NnB4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDc5MSAyOTYiIHdpZHRoPSI3OTFweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjxyZWN0IGZpbGw9IiNEREREREQiIGhlaWdodD0iMjU0LjQ1MzEiIHJ4PSI3LjUiIHJ5PSI3LjUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI3NTkuMzc2IiB4PSIxMiIgeT0iMjIiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzOTkuMzAwOCIgeD0iMTciIHk9IjM5Ljk5NTEiPlRoZSBwbHVnaW4geW91IGFyZSB1c2luZyBzZWVtcyB0byBnZW5lcmF0ZWQgYSBiYWQgVVJMLjwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzMDIuNDQyNCIgeD0iMTciIHk9IjU2LjI5MiI+VGhpcyBVUkwgZG9lcyBub3QgbG9vayBsaWtlIEhVRkZNQU4gZGF0YS48L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNC40NTAyIiB4PSIxNyIgeT0iNzIuNTg4OSI+JiMxNjA7PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjIwNC45MjA5IiB4PSIxNyIgeT0iODguODg1NyI+U2VlIGh0dHBzOi8vcGxhbnR1bWwuY29tL3B0ZTwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI0LjQ1MDIiIHg9IjE3IiB5PSIxMDUuMTgyNiI+JiMxNjA7PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjQyOC4xNDg0IiB4PSIxNyIgeT0iMTIxLjQ3OTUiPllvdSBtYXkgY29udGFjdCB0aGUgUGxhbnRVTUwgdGVhbSBhdCBwbGFudHVtbEBnbWFpbC5jb208L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNzQ5LjM3NiIgeD0iMTciIHk9IjEzNy43NzY0Ij5CdXQgeW91IHNob3VsZCBhbHNvIHByb2JhYmx5IGNvbnRhY3QgdGhlIHBsdWdpbiBhdXRob3JzIHlvdSBhcmUgY3VycmVudGx5IHVzaW5nIGFuZCBzZW5kIHRoZW0gdGhpcyBpbWFnZTwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI0LjQ1MDIiIHg9IjE3IiB5PSIxNTQuMDczMiI+JiMxNjA7PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjIzMi41NDQ5IiB4PSIxNyIgeT0iMTcwLjM3MDEiPkZvciB0aGUgcmVjb3JkLCBoZXJlIGlzIHlvdXIgZGF0YTo8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNC40NTAyIiB4PSIxNyIgeT0iMTg2LjY2NyI+JiMxNjA7PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjY3NS43NjY2IiB4PSIxNyIgeT0iMjAyLjk2MzkiPmVKeGRVc0Z1d2pBTXZlY3JMTzc4d3NTcUN0VEROQVRxYWVKZzJteXJOdElwY1VFSTdkOW5PMGtKT3pYdlBkdDVmdWtxRUhxYVR0X21CN3N2PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjcxNi4yMzU0IiB4PSIxNyIgeT0iMjE5LjI2MDciPl9MQ3dXUHZSa1hYOUFtNEc0SzBOMWtQRGpIX0h6aDRBQTdTTkNMdHhZdklneHowaFdYaEJ4d05PMXBGV0tXbC16WDF5eFlmNzRPZHRBeHN1PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjY1NS44MTI1IiB4PSIxNyIgeT0iMjM1LjU1NzYiPnVlQlY2eGtyUGRFbmp4ZzZwR0Ywc0xmLVBLUjdSWm90bFlJUUltejkyRThkUFdpSkVfblY5XzhhbGRGT3ZJcnh4ODdJeVFvOUVoNHg4QTUxPC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjY3OC42MzA5IiB4PSIxNyIgeT0iMjUxLjg1NDUiPk9vVXlucnFhYmRSVmFTUUpDVVl0dWtpS0F1YjVqcmFCNWZJSllxd21mcFNKUVJhRUpHVWtQZ1VTU2dZYVJBWjU4NHpqc3JPYXRqTzZRVzVtPC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjI5OS40MTQxIiB4PSIxNyIgeT0iMjY4LjE1MTQiPks5bDdNWUxaNkhvZUkzVXBzcEl6SzM1Zl9wdi1BSVVzdk1BPTwvdGV4dD48IS0tU1JDPVtMUEJUU2dlbTU4TmxVT2V5bTZjaGhPWHN2aW1TajUxMTUwSWZxWGlkYVdXODhQV1ZIOXctZ1VUZHZqcGlzSFRoaFJzLUlJZ1N1SGZmc25vM2ZmOVBLT0NSYkcwbzMyR2x3V25tWjBhN1dXOGJtbW1BWjAwNEh1WDA3N2dGb2JSbXhtcVdZWmNlZ0cwTGZJTWVZWEEzSE1wUkF0Q0Q0MUptS1RDWVo0NGtIQ0RWZHZ3UTJqUDJha2VuZlVJZjRMWko0ZE1LbTFqOFFJcldBZTFHVk85bExScG9XQzJHMDJaME56a2xaQzNZUmpQY0tqbUJ5dnBBSWJNaEUwS0RlcVR1aEZ1Ri1tQzdmU1dmdV95V0t5YU9oZUtJX3lRNURMQjhRWVdGS0tGWDVHSGNnZzVEc0pzOHVQR296MEZhTURjQlVuQXhDeHZnNmRPeDU3RFJOaV9jZ2lLZnl0blpTa05IUEl3c1JzanBVdTdPcFB4OVpRczVxd0ludkhYZU1sazNxbE54VkhpV2VQemFVUjRNNXhXTDFwOHBVQWlUbEZicjV4SFhrVHpGSko5dzdvcTd3czRQbDlxTlhxTVZacXBKWURQcEp0SDl3c0hURnlYdC10cE1OVFYtaUI1dG9ydHJxRS03am91djZJQ1YyUkZaS2ZEdXpaN2tJWE9XZ3B2dHNSWHZqbVZTRXBxNG96MDhGd2NlNGNWWmE3eHdSNHJHaTJqU3dyMV9KMHlKTTI3UlJudE1USEYza010ZXJDZjd0U0pLWHZmRnVybERCbDI4bVd5T1JUbnZkMFhQNWFqSjdsS3BXcEZ6dkJaOXZLZkVKVUhrR2NZdnh0NFBQNzRLUEdhQ3BLenpDa2hGZEZiR2RGdG5QZ1NKUkpjalo1TllWT3VONTNpbFNTQ1Jmci0gLXdBVDNxcHdPSmlwUmJWYkpLb3pLdEpfazVtMDBdLS0+PC9nPjwvc3ZnPg==" alt="PlantUML Diagram (Embedded)">
+        
+        <!-- Server fallbacks -->
+        <img id="diagram-svg-0" src="http://www.plantuml.com/plantuml/svg/~1eJxdUsFuwjAMvecrLO78wsSqCtTDNATqaeJg2myrNtIpcUEI7d9nO0kJOzXvPdt5fukqEHqaTt_mB7sv_LCwWPvRkXX9Am4G4K0N1kPDjH_Hzh4AA7SNCLtxYvIgxz0hWXhBxwNO1pFWKWl-zX1yxYf74OdtAxsuueBV6xkrPdEnjxg6pGF0sLf-PKR7RZotlYIQImz92E8dPWiJE_nV9_8aldFOvIrxx87IyQo9Eh4x8A51OoUynrqabdRVaSQJCUYtukiKAub5jraB5fIJYqwmfpSJQRaEJGUkPgUSSgYaRAZ584zjsrOatjO6QW5mK9l7MYLZ6HoeI3UpspIzK35f_pv-AIUsvMA=" alt="PlantUML Diagram (Server 1)" onerror="this.style.display='none'" style="display:none;">
+    <img id="diagram-svg-1" src="https://www.plantuml.com/plantuml/svg/~1eJxdUsFuwjAMvecrLO78wsSqCtTDNATqaeJg2myrNtIpcUEI7d9nO0kJOzXvPdt5fukqEHqaTt_mB7sv_LCwWPvRkXX9Am4G4K0N1kPDjH_Hzh4AA7SNCLtxYvIgxz0hWXhBxwNO1pFWKWl-zX1yxYf74OdtAxsuueBV6xkrPdEnjxg6pGF0sLf-PKR7RZotlYIQImz92E8dPWiJE_nV9_8aldFOvIrxx87IyQo9Eh4x8A51OoUynrqabdRVaSQJCUYtukiKAub5jraB5fIJYqwmfpSJQRaEJGUkPgUSSgYaRAZ584zjsrOatjO6QW5mK9l7MYLZ6HoeI3UpspIzK35f_pv-AIUsvMA=" alt="PlantUML Diagram (Server 2)" onerror="this.style.display='none'" style="display:none;">
+    <img id="diagram-svg-2" src="http://plantuml.com/plantuml/svg/~1eJxdUsFuwjAMvecrLO78wsSqCtTDNATqaeJg2myrNtIpcUEI7d9nO0kJOzXvPdt5fukqEHqaTt_mB7sv_LCwWPvRkXX9Am4G4K0N1kPDjH_Hzh4AA7SNCLtxYvIgxz0hWXhBxwNO1pFWKWl-zX1yxYf74OdtAxsuueBV6xkrPdEnjxg6pGF0sLf-PKR7RZotlYIQImz92E8dPWiJE_nV9_8aldFOvIrxx87IyQo9Eh4x8A51OoUynrqabdRVaSQJCUYtukiKAub5jraB5fIJYqwmfpSJQRaEJGUkPgUSSgYaRAZ584zjsrOatjO6QW5mK9l7MYLZ6HoeI3UpspIzK35f_pv-AIUsvMA=" alt="PlantUML Diagram (Server 3)" onerror="this.style.display='none'" style="display:none;">
+    <img id="diagram-svg-3" src="https://plantuml.com/plantuml/svg/~1eJxdUsFuwjAMvecrLO78wsSqCtTDNATqaeJg2myrNtIpcUEI7d9nO0kJOzXvPdt5fukqEHqaTt_mB7sv_LCwWPvRkXX9Am4G4K0N1kPDjH_Hzh4AA7SNCLtxYvIgxz0hWXhBxwNO1pFWKWl-zX1yxYf74OdtAxsuueBV6xkrPdEnjxg6pGF0sLf-PKR7RZotlYIQImz92E8dPWiJE_nV9_8aldFOvIrxx87IyQo9Eh4x8A51OoUynrqabdRVaSQJCUYtukiKAub5jraB5fIJYqwmfpSJQRaEJGUkPgUSSgYaRAZ584zjsrOatjO6QW5mK9l7MYLZ6HoeI3UpspIzK35f_pv-AIUsvMA=" alt="PlantUML Diagram (Server 4)" onerror="this.style.display='none'" style="display:none;">
+    
+        
+        <!-- Error message -->
+        <div id="error-message" class="error-message">
+            Could not load the PlantUML diagram. Please check your internet connection or try one of the options below.
+            <div id="rendering-options">
+                <div class="rendering-option" onclick="window.open('http://www.plantuml.com/plantuml/uml/~1eJxdUsFuwjAMvecrLO78wsSqCtTDNATqaeJg2myrNtIpcUEI7d9nO0kJOzXvPdt5fukqEHqaTt_mB7sv_LCwWPvRkXX9Am4G4K0N1kPDjH_Hzh4AA7SNCLtxYvIgxz0hWXhBxwNO1pFWKWl-zX1yxYf74OdtAxsuueBV6xkrPdEnjxg6pGF0sLf-PKR7RZotlYIQImz92E8dPWiJE_nV9_8aldFOvIrxx87IyQo9Eh4x8A51OoUynrqabdRVaSQJCUYtukiKAub5jraB5fIJYqwmfpSJQRaEJGUkPgUSSgYaRAZ584zjsrOatjO6QW5mK9l7MYLZ6HoeI3UpspIzK35f_pv-AIUsvMA=', '_blank')">
+                    Open on PlantUML server
+                </div>
+                <div class="rendering-option" onclick="copyContent()">
+                    Copy PlantUML code to clipboard
+                </div>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <button id="dark-mode-btn">Toggle Dark Mode</button>
+        </div>
+        
+        <h2>PlantUML Source:</h2>
+        <pre><code>@startuml
+package "Frontend" {
+  [User Interface] as UI
+  [Router]
+  [State Management] as State
+}
+
+package "Backend" {
+  [API Gateway] as API
+  [Authentication Service] as Auth
+  [User Service] as User
+  [Product Service] as Product
+  [Order Service] as Order
+  [Payment Service] as Payment
+}
+
+database "Databases" {
+  [User DB] as UserDB
+  [Product DB] as ProductDB
+  [Order DB] as OrderDB
+}
+
+UI --> Router
+Router --> State
+Router --> API
+
+API --> Auth
+API --> User
+API --> Product
+API --> Order
+API --> Payment
+
+User --> UserDB
+Product --> ProductDB
+Order --> OrderDB
+Payment --> OrderDB
+
+@enduml</code></pre>
+    </div>
+    <script>
+        function copyContent() {
+            const text = document.querySelector('pre code').textContent;
+            navigator.clipboard.writeText(text)
+                .then(() => alert('PlantUML code copied to clipboard'))
+                .catch(err => alert('Failed to copy: ' + err));
+        }
+    </script>
+</body>
+</html>

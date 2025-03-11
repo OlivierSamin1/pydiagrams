@@ -14,79 +14,6 @@ from jinja2 import Environment, FileSystemLoader
 
 
 class HTMLRenderer:
-    def _convert_plantuml_to_mermaid(self, content):
-        """
-        Convert PlantUML diagram to Mermaid format
-        
-        Args:
-            content: PlantUML diagram content
-            
-        Returns:
-            Mermaid diagram content
-        """
-        import re
-        
-        # Remove @startuml and @enduml tags
-        content = re.sub(r'@startuml.*?\n', '', content)
-        content = re.sub(r'@enduml.*?\n', '', content)
-        
-        # Detect diagram type
-        content_lower = content.lower()
-        if "actor" in content_lower or "participant" in content_lower or "->" in content_lower and not "class" in content_lower:
-            # Sequence diagram
-            # Convert title
-            title_match = re.search(r'title\s+(.*?)$', content, re.MULTILINE)
-            if title_match:
-                title = title_match.group(1)
-                content = re.sub(r'title\s+.*?\n', '', content)
-                mermaid_title = f"sequenceDiagram\n    title: {title}\n"
-            else:
-                mermaid_title = "sequenceDiagram\n"
-            
-            # Convert participants
-            participant_pattern = r'participant\s+"([^"]+)"\s+as\s+(\w+)'
-            actor_pattern = r'actor\s+"([^"]+)"\s+as\s+(\w+)'
-            database_pattern = r'database\s+"([^"]+)"\s+as\s+(\w+)'
-            
-            def convert_participant_line(match):
-                name = match.group(1)
-                alias = match.group(2)
-                return f"    participant {alias} as \"{name}\""
-            
-            content = re.sub(participant_pattern, convert_participant_line, content)
-            content = re.sub(actor_pattern, lambda m: f"    actor {m.group(2)} as \"{m.group(1)}\"", content)
-            content = re.sub(database_pattern, lambda m: f"    participant {m.group(2)} as \"{m.group(1)}\"", content)
-            
-            # Simple participants without quotes or aliases
-            content = re.sub(r'participant\s+(\w+)\s*$', r'    participant \1', content, flags=re.MULTILINE)
-            content = re.sub(r'actor\s+(\w+)\s*$', r'    actor \1', content, flags=re.MULTILINE)
-            content = re.sub(r'database\s+(\w+)\s*$', r'    participant \1', content, flags=re.MULTILINE)
-            
-            # Convert arrows
-            content = re.sub(r'(\w+)\s*->\s*(\w+)\s*:\s*(.*?)$', r'    \1->>\2: \3', content, flags=re.MULTILINE)
-            content = re.sub(r'(\w+)\s*-->\s*(\w+)\s*:\s*(.*?)$', r'    \1-->>\2: \3', content, flags=re.MULTILINE)
-            
-            # Handle activation/deactivation
-            content = re.sub(r'activate\s+(\w+)', r'    activate \1', content)
-            content = re.sub(r'deactivate\s+(\w+)', r'    deactivate \1', content)
-            
-            # Handle notes
-            content = re.sub(r'note\s+(?:left|right)\s+of\s+(\w+)\s*:\s*(.*?)$', 
-                            r'    Note \1: \2', content, flags=re.MULTILINE)
-            
-            return mermaid_title + content.strip()
-        
-        elif "class" in content_lower or "<|--" in content_lower:
-            # Class diagram
-            mermaid_content = "classDiagram\n"
-            
-            # Placeholder for full class diagram conversion
-            return mermaid_content + "    " + content.strip().replace('\n', '\n    ')
-            
-        else:
-            # Default to flowchart for other diagram types
-            return f"graph TD\n    A[PlantUML converted to Mermaid]\n    B[Some features may not be fully supported]\n    A --> B"
-    
     """Renderer for HTML output format."""
     
     # Default PlantUML server URL
@@ -193,15 +120,6 @@ class HTMLRenderer:
             encoded_content = self._encode_plantuml(context['diagram_content'])
             context['diagram_image_url'] = f"{self.PLANTUML_SERVER}/svg/{encoded_content}"
             context['plantuml_server'] = self.PLANTUML_SERVER
-            
-            # Convert PlantUML to Mermaid as a fallback
-            try:
-                context['mermaid_content'] = self._convert_plantuml_to_mermaid(context['diagram_content'])
-            except Exception as e:
-                print(f"Warning: Failed to convert PlantUML to Mermaid: {e}")
-                # Safely escape any quotes in the error message
-                error_msg = str(e).replace('"', '\\"')
-                context['mermaid_content'] = f"graph TD\n    A[Error converting PlantUML to Mermaid]"
         else:
             # For other diagram types, we'll need to implement custom templates
             # For now, let's use a generic template

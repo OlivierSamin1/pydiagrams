@@ -137,3 +137,29 @@ For full documentation, visit [docs.pydiagrams.org](https://docs.pydiagrams.org)
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details. 
+
+## Viewing PlantUML Diagrams Locally
+
+To view PlantUML diagrams locally without CORS or server issues, use the fixed renderer:
+
+```bash
+# Install the required library
+pip install requests
+
+# Run the PlantUML fixer script
+python fix_plantuml_rendering.py
+```
+
+This will:
+1. Pre-download SVG renderings of your PlantUML diagrams
+2. Create standalone HTML files with the diagrams embedded
+3. Provide fallback rendering options if the primary method fails
+4. Open the diagrams in your browser
+
+The fixed HTML files will be in the `plantuml_fixed` directory and include:
+- Embedded SVG content (no network requests needed)
+- Dark mode support
+- Source code display
+- Multiple fallback rendering options
+
+For more details, see the `plantuml_fixed/README.md` file.

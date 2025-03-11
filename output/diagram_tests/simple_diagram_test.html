@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagram Debug Test</title>
+    
+    <script>
+        console.log("=== DIAGRAM DEBUG TEST ===");
+        console.log("Document loaded at:", new Date().toISOString());
+        
+        // Log when DOM content is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM content loaded");
+            console.log("Looking for .mermaid element:", document.querySelector('.mermaid'));
+            console.log("Looking for #diagram element:", document.getElementById('diagram'));
+            
+            // Check which scripts are loaded
+            const scripts = document.querySelectorAll('script');
+            console.log("Scripts loaded:", scripts.length);
+            scripts.forEach((script, i) => {
+                console.log(`Script ${i+1}:`, script.src || 'inline script');
+            });
+            
+            // Check which stylesheets are loaded
+            const styles = document.querySelectorAll('link[rel="stylesheet"]');
+            console.log("Stylesheets loaded:", styles.length);
+            styles.forEach((style, i) => {
+                console.log(`Stylesheet ${i+1}:`, style.href);
+            });
+        });
+    </script>
+    
+    <!-- Load Mermaid directly from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log("Initializing Mermaid...");
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'default'
+            });
+            console.log("Mermaid initialized");
+        });
+    </script>
+</head>
+<body>
+    <h1>Diagram Debug Test</h1>
+    
+    <h2>Direct Mermaid Rendering (CDN)</h2>
+    <div class="mermaid">graph TD
+    A[Client] --> B[Server]
+    B --> C[Database]
+    </div>
+    
+    <h2>Information</h2>
+    <ul>
+        <li>Check the browser console (F12 or right-click > Inspect > Console) for debug information</li>
+        <li>Look for any error messages related to script loading or diagram rendering</li>
+        <li>Make sure you opened this file with the <code>--allow-file-access-from-files</code> flag</li>
+    </ul>
+</body>
+</html>
