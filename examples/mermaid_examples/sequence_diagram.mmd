@@ -1,0 +1,31 @@
+sequenceDiagram
+    participant User
+    participant CLI
+    participant PyDiagrams
+    participant DiagramUtils
+    participant Renderer
+    
+    User->>CLI: Run command with Mermaid file
+    CLI->>PyDiagrams: create_diagram_from_file()
+    PyDiagrams->>DiagramUtils: generate_diagram_from_file()
+    DiagramUtils->>DiagramUtils: detect_diagram_file_type()
+    DiagramUtils->>DiagramUtils: parse_diagram_file()
+    
+    alt HTML output
+        DiagramUtils->>Renderer: HTMLRenderer.render()
+        Renderer->>Renderer: get_template()
+        Renderer->>Renderer: inject_resources()
+    else SVG/PNG output
+        DiagramUtils->>Renderer: MermaidRenderer.render()
+        
+        alt mmdc available
+            Renderer->>Renderer: _render_with_mmdc()
+        else fallback
+            Renderer->>Renderer: _render_fallback()
+        end
+    end
+    
+    Renderer-->>DiagramUtils: Return output path
+    DiagramUtils-->>PyDiagrams: Return output path
+    PyDiagrams-->>CLI: Return output path
+    CLI-->>User: Display success message 

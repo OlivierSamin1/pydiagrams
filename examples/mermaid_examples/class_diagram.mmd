@@ -1,0 +1,40 @@
+classDiagram
+    class PyDiagrams {
+        +generate_diagram_from_file()
+        +create_diagram_from_file()
+    }
+    
+    class DiagramUtils {
+        +detect_diagram_file_type()
+        +is_diagram_file()
+        +parse_diagram_file()
+        +generate_diagram_from_file()
+    }
+    
+    class MermaidRenderer {
+        -has_mmdc: bool
+        +render()
+        -_render_with_mmdc()
+        -_render_fallback()
+    }
+    
+    class HTMLRenderer {
+        -templates_dir: Path
+        -width: int
+        -height: int
+        -interactive: bool
+        -dark_mode: bool
+        -inline_resources: bool
+        +render()
+        +get_template()
+        +inject_resources()
+    }
+    
+    class CLI {
+        +main()
+    }
+    
+    PyDiagrams --> DiagramUtils : uses
+    DiagramUtils --> MermaidRenderer : uses
+    DiagramUtils --> HTMLRenderer : uses
+    CLI --> DiagramUtils : uses 

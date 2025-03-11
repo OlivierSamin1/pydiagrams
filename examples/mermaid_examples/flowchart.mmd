@@ -1,0 +1,27 @@
+graph TD
+    A[Start] --> B[Parse Command Line Arguments]
+    B --> C{Valid Mermaid File?}
+    C -->|Yes| D[Detect Diagram Type]
+    C -->|No| E[Display Error]
+    E --> Z[End]
+    
+    D --> F[Parse Diagram File]
+    F --> G{Output Format?}
+    
+    G -->|HTML| H[Create HTML Renderer]
+    H --> I[Apply Theme]
+    I --> J[Set Dark Mode]
+    J --> K[Inject Resources if Needed]
+    K --> L[Generate HTML Output]
+    
+    G -->|SVG/PNG| M[Create Mermaid Renderer]
+    M --> N{mmdc Available?}
+    N -->|Yes| O[Use mmdc for Rendering]
+    N -->|No| P[Use Fallback Renderer]
+    O --> Q[Generate SVG/PNG Output]
+    P --> Q
+    
+    L --> R[Return Output Path]
+    Q --> R
+    R --> S[Display Success Message]
+    S --> Z 
