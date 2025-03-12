@@ -1,102 +1,179 @@
 # PyDiagrams
 
-A Python library for generating Mermaid diagrams with support for SVG, PNG, and interactive HTML outputs.
+[![PyPI version](https://img.shields.io/pypi/v/pydiagrams.svg)](https://pypi.org/project/pydiagrams/)
+[![Python versions](https://img.shields.io/pypi/pyversions/pydiagrams.svg)](https://pypi.org/project/pydiagrams/)
+[![License](https://img.shields.io/pypi/l/pydiagrams.svg)](https://github.com/yourusername/pydiagrams/blob/main/LICENSE)
 
-## Features
+A powerful Python library for generating and rendering Mermaid diagrams with support for multiple output formats and interactive features.
 
-- Generate diagrams from Mermaid files
-- Output formats: SVG, PNG, and interactive HTML
-- Theme customization with 6 built-in themes
-- Dark mode support
-- Interactive features in HTML output:
-  - Zoom and pan
-  - Theme switching
-  - Dark mode toggle
-  - Export options
-  - Responsive design
+## 🚀 Features
 
-## Installation
+- **Multiple Output Formats**: Generate diagrams as SVG, PNG, or interactive HTML
+- **Rich Interactive HTML**: Create web-based diagrams with zoom, pan, and export capabilities
+- **Theming Support**: Choose from 6 built-in themes with dark mode options
+- **Accessibility Features**: High-contrast theme and responsive design
+- **Portable Outputs**: Option to inline resources for standalone HTML files
+- **Simple API**: Easy-to-use Python API and command-line interface
+- **Comprehensive Diagram Support**: Works with various diagram types:
+  - **UML Diagrams**: Class, Sequence, Activity, State, Component, Use Case
+  - **Architectural Diagrams**: Context, Container, Component, Deployment, Network
+  - **Entity Diagrams**: Entity-Relationship Diagrams (ERD), Data Flow Diagrams (DFD)
+  - **Flowcharts**: Process flows and decision trees
+
+## 📦 Installation
 
 ```bash
 pip install pydiagrams
 ```
 
-## Quick Start
+### Requirements
+
+- Python 3.6+
+- For SVG/PNG output: [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli) (optional but recommended)
+
+## 🔧 Quick Start
 
 ### Python API
 
 ```python
 from pydiagrams import create_diagram_from_file
 
-# Generate SVG from a Mermaid file
+# Basic SVG generation
 create_diagram_from_file("my_diagram.mmd", "output.svg")
 
-# Generate PNG from a Mermaid file
-create_diagram_from_file("my_diagram.mmd", "output.png", output_format="png")
+# PNG output
+create_diagram_from_file(
+    "my_diagram.mmd", 
+    "output.png", 
+    output_format="png"
+)
 
-# Generate interactive HTML with a theme and dark mode
+# Interactive HTML with theming and dark mode
 create_diagram_from_file(
     "my_diagram.mmd", 
     "output.html", 
     output_format="html", 
     theme="blue", 
-    dark_mode=True
+    dark_mode=True,
+    inline_resources=True  # For portable HTML files
 )
 ```
 
 ### Command Line Interface
 
 ```bash
-# Generate SVG from a Mermaid file (default)
+# Generate SVG (default format)
 pydiagrams my_diagram.mmd -o output.svg
 
-# Generate PNG from a Mermaid file
+# Generate PNG
 pydiagrams my_diagram.mmd -o output.png -f png
 
-# Generate interactive HTML with a theme and dark mode
+# Generate interactive HTML with theme and dark mode
 pydiagrams my_diagram.mmd -o output.html -f html --theme blue --dark-mode
 
-# Generate HTML with inline resources for better portability
+# Generate portable HTML with inline resources
 pydiagrams my_diagram.mmd -o output.html -f html --inline-resources
 ```
 
-## Interactive HTML Features
-
-The HTML output includes several interactive features:
-
-- **Zoom and Pan**: Easily zoom in/out and navigate large diagrams
-- **Theme Selection**: Choose from 6 built-in themes (default, forest, dark, neutral, blue, high-contrast)
-- **Dark Mode**: Toggle between light and dark modes for better readability
-- **Export Options**: Export the diagram as SVG or PNG directly from the browser
-- **Responsive Design**: Adapts to different screen sizes and devices
-
-## Themes
+## 🎨 Themes and Customization
 
 PyDiagrams supports the following themes:
 
-- `default`: Clean, professional look
-- `forest`: Nature-inspired green theme
-- `dark`: Dark background with light elements
-- `neutral`: Balanced, muted colors
-- `blue`: Blue-focused color scheme
-- `high-contrast`: High contrast for accessibility
+| Theme | Description |
+|-------|-------------|
+| `default` | Clean, professional look with balanced colors |
+| `forest` | Nature-inspired green theme |
+| `dark` | Dark background with light elements |
+| `neutral` | Balanced, muted colors for professional documents |
+| `blue` | Blue-focused color scheme |
+| `high-contrast` | High contrast for accessibility |
 
-## Examples
+Each theme can be combined with dark mode for different visual styles.
 
-Check out the `examples` directory for comprehensive examples:
+## 🖥️ Interactive HTML Features
 
-- `examples/mermaid_comprehensive_example.py`: Demonstrates all features
-- `examples/mermaid_examples/`: Contains sample Mermaid diagram files
+The HTML output includes several interactive features:
 
-## Requirements
+- **Zoom and Pan**: Navigate large diagrams with intuitive controls
+- **Theme Selection**: Switch between themes directly in the browser
+- **Dark Mode Toggle**: Easily switch between light and dark modes
+- **Export Options**: Download the diagram as SVG or PNG
+- **Responsive Design**: Adapts to different screen sizes and devices
 
-- Python 3.6+
-- For SVG/PNG output: [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli) (optional but recommended)
+## 📊 Supported Diagram Types
 
-## License
+PyDiagrams supports all standard Mermaid diagram types:
 
-MIT
+### UML Diagrams
+- Class Diagrams
+- Sequence Diagrams
+- Activity Diagrams
+- State Diagrams
+- Component Diagrams
+- Use Case Diagrams
 
-## Documentation
+### Architectural Diagrams
+- Context Diagrams
+- Container Diagrams
+- Component Diagrams
+- Deployment Diagrams
+- Network Diagrams
+
+### Entity Diagrams
+- Entity-Relationship Diagrams (ERD)
+- Data Flow Diagrams (DFD)
+
+### Other Diagrams
+- Flowcharts
+- Gantt Charts
+- Pie Charts
+
+## 📚 Examples
+
+The library includes comprehensive examples in the `examples` directory:
+
+```
+examples/
+├── mermaid_comprehensive_example.py  # Demonstrates all features
+├── generate_all_examples.py          # Generates HTML for all examples
+├── mermaid_examples/                 # Basic Mermaid examples
+├── uml/                              # UML diagram examples
+├── architectural/                    # Architectural diagram examples
+├── entity/                           # Entity diagram examples
+└── code/                             # Code-related diagram examples
+```
+
+To run the comprehensive example:
+
+```bash
+python examples/mermaid_comprehensive_example.py
+```
+
+To generate HTML for all examples:
+
+```bash
+python examples/generate_all_examples.py
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 📚 Documentation
 
 For full documentation, visit [docs.pydiagrams.org](https://docs.pydiagrams.org).
+
+## 🙏 Acknowledgements
+
+- [Mermaid](https://mermaid-js.github.io/mermaid/) - The JavaScript-based diagramming and charting tool
+- [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli) - Command-line interface for Mermaid
